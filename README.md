@@ -44,6 +44,7 @@ The key files are in `Kardly-signing-key.zip`. Keep that zip safe and **never co
 | `app/build-web.mjs` | Builds `app/www` with offline copies of OpenCV, Tesseract OCR and the fonts. |
 | `app/android/` | Capacitor 8 Android project, including the icon, splash screen and signing config. |
 | `.github/workflows/build-apk.yml` | The cloud build. |
+| `brand/` | Logo files: icon (SVG, 1024 px PNG), mark, and dark/light logo lockups. |
 
 ## Build on your own computer
 

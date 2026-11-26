@@ -2,9 +2,9 @@
   "appId": "app.kardly.wallet",
   "appName": "Kardly",
   "webDir": "www",
-  "backgroundColor": "#080D0B",
+  "backgroundColor": "#0A1A3D",
   "android": {
-    "backgroundColor": "#080D0B"
+    "backgroundColor": "#0A1A3D"
   },
   "plugins": {
     "SystemBars": {
