@@ -197,6 +197,19 @@ a { color: var(--emerald); }
 .round svg { width: 17px; height: 17px; }
 @media (max-width: 420px) { .li { grid-template-columns: 78px 1fr; } .li .thumb { width: 78px; } .li-acts { grid-column: 2; } }
 
+/* swipe view: one big card at a time, native snap scrolling */
+.carousel { display: grid; grid-auto-flow: column; grid-auto-columns: min(86%, 460px); gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain;
+  margin: 22px calc(-1 * max(18px, env(safe-area-inset-right, 0px))) 0 calc(-1 * max(18px, env(safe-area-inset-left, 0px))); padding: 8px max(18px, env(safe-area-inset-left, 0px)) 14px; }
+.carousel::-webkit-scrollbar { display: none; }
+.slide { scroll-snap-align: center; scroll-snap-stop: always; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.slide { grid-template-columns: minmax(0, 1fr); }
+.slide .li-acts { justify-content: flex-start; grid-column: auto; }
+.car-count { text-align: center; color: var(--faint); font-size: .8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+/* card detail: swipe or tap the arrows for the next card */
+#detailBody { touch-action: pan-y; will-change: transform; }
+.dnav { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.dnav .count { min-width: 84px; text-align: center; font-size: .84rem; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.round:disabled { opacity: .35; cursor: default; }
 .empty { text-align: center; padding: 56px 16px 24px; color: var(--muted); display: grid; justify-items: center; gap: 10px; }
 .empty h2 { font-family: var(--f-display); font-weight: 800; letter-spacing: -0.02em; color: var(--ink); margin: 0; font-size: 1.6rem; }
 .empty p { margin: 0; max-width: 40ch; }
@@ -232,7 +245,7 @@ a { color: var(--emerald); }
 @media (min-width: 820px) { .sheet { padding: 28px; align-items: center; } .sheet-panel { height: auto; max-height: 100%; border-radius: 24px; border: 1px solid var(--line-strong); box-shadow: var(--lift-shadow); } }
 .sheet-head { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 10px; padding: calc(env(safe-area-inset-top, 0px) + 12px) max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px)); background: linear-gradient(var(--sheet-bg) 70%, transparent); }
 .sheet-head h2 { margin: 0; flex: 1; min-width: 0; font-size: 1rem; font-weight: 700; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sheet-body { padding: 6px max(18px, env(safe-area-inset-right, 0px)) 22px max(18px, env(safe-area-inset-left, 0px)); display: grid; gap: 18px; flex: 1; align-content: start; position: relative; z-index: 1; }
+.sheet-body { padding: 6px max(18px, env(safe-area-inset-right, 0px)) 22px max(18px, env(safe-area-inset-left, 0px)); display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; flex: 1; align-content: start; position: relative; z-index: 1; }
 .sheet-foot { position: sticky; bottom: 0; z-index: 5; display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; padding: 14px max(18px, env(safe-area-inset-right, 0px)) calc(14px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); background: linear-gradient(transparent, var(--sheet-bg) 30%); }
 .sheet-foot .spacer { flex: 1; }
 .steps { display: flex; gap: 5px; justify-content: center; }
@@ -326,7 +339,7 @@ input[type="date"] { color-scheme: inherit; }
 .badge { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 11px; border-radius: 999px; font-size: .76rem; font-weight: 700; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
 .badge svg { width: 14px; height: 14px; }
 .badge.gold { background: var(--gold-soft); color: var(--gold); border-color: var(--gold-line); }
-.acts { display: grid; grid-template-columns: repeat(auto-fit, minmax(68px, 1fr)); gap: 10px; max-width: 520px; width: 100%; justify-self: center; }
+.acts { display: grid; grid-template-columns: repeat(auto-fit, minmax(56px, 1fr)); gap: 8px; max-width: 520px; width: 100%; justify-self: center; }
 .act { display: grid; justify-items: center; gap: 7px; text-decoration: none; color: var(--ink); font-size: .74rem; font-weight: 700; background: none; border: 0; cursor: pointer; padding: 0; }
 .act .o { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); border: 1px solid var(--line); transition: transform .15s, border-color .15s; }
 .act .o svg { width: 22px; height: 22px; }
@@ -398,6 +411,7 @@ input[type="date"] { color-scheme: inherit; }
   <div class="viewbar">
     <div class="seg" role="group" aria-label="View">
       <button type="button" data-view="stack" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="9" width="18" height="11" rx="2"/></svg>Wallet</button>
+      <button type="button" data-view="swipe" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="6" y="5" width="12" height="14" rx="2"/><path d="M3 8v8M21 8v8" stroke-linecap="round"/></svg>Swipe</button>
       <button type="button" data-view="list" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"/><rect x="3" y="4.5" width="3" height="3" rx="1"/><rect x="3" y="10.5" width="3" height="3" rx="1"/><rect x="3" y="16.5" width="3" height="3" rx="1"/></svg>List</button>
     </div>
     <select class="sort" id="sort" aria-label="Sort cards">
@@ -586,6 +600,8 @@ const ICON = {
   cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   bell: '<path d="M6 9a6 6 0 1 1 12 0c0 6 3 7 3 7H3s3-1 3-7"/><path d="M10 20a2 2 0 0 0 4 0"/>',
   grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  chevL: '<path d="m15 18-6-6 6-6"/>',
+  chevR: '<path d="m9 18 6-6-6-6"/>',
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'
 };
 function icon(name) {
@@ -871,6 +887,7 @@ function render() {
     return;
   }
   const grouped = prefs.sort === "company" || prefs.sort === "met" || prefs.sort === "name";
+  if (prefs.view === "swipe") { main.append(carouselEl(list)); return; }
   if (prefs.view === "stack" && !grouped) { main.append(stackEl(list)); return; }
   if (!grouped) { main.append(h("div", { class: "list" }, list.map(rowEl))); return; }
   const keyOf = prefs.sort === "company" ? c => companyOf(c) || "No company" : prefs.sort === "met" ? c => metOf(c) || "Not recorded" : c => { const f = (c.name || c.company || "#").trim()[0] || "#"; return /\p{L}/u.test(f) ? f.toUpperCase() : "#"; };
@@ -882,6 +899,36 @@ function render() {
 }
 function clearFilters() { filt.q = ""; filt.company = ""; filt.chip = ""; $("#q").value = ""; render(); }
 function titleOf(c) { return c.name || c.company || "Unnamed card"; }
+function carouselEl(list) {
+  const track = h("div", { class: "carousel", role: "list", "aria-label": "Cards, swipe sideways" });
+  list.forEach(c => {
+    const t = titleOf(c), sub = [c.title, c.name ? c.company : ""].filter(Boolean).join(" · ");
+    const web = webUrl(c.website), phones = (c.phones || []).map(phoneParts), ph = phones.find(p => p.tel), wa = phones.find(p => p.wa);
+    const acts = h("div", { class: "li-acts" });
+    if (web) acts.append(h("a", { class: "round", href: web, target: "_blank", rel: "noopener noreferrer", "aria-label": `Website of ${t}` }, icon("globe")));
+    if (ph) acts.append(h("a", { class: "round", href: ph.tel, "aria-label": `Call ${t}` }, icon("phone")));
+    if (wa) acts.append(h("a", { class: "round", href: wa.wa, target: "_blank", rel: "noopener noreferrer", "aria-label": `WhatsApp ${t}` }, icon("chat")));
+    track.append(h("div", { class: "slide", role: "listitem" },
+      h("button", { class: "sc", type: "button", "aria-label": `Open ${t}`, onclick: () => openDetail(c.id) },
+        cardImg(c.thumb || c.front, `${t}'s card`),
+        h("span", { class: "tagline" }, c.example ? h("span", { class: "pill ex", text: "Example" }) : null, isDue(c) ? h("span", { class: "pill gold", text: "Follow up" }) : null)),
+      h("div", { class: "li-text", onclick: () => openDetail(c.id) }, h("h3", { text: t }), sub ? h("p", { text: sub }) : null,
+        metOf(c) ? h("span", { class: "met" }, icon("pin"), metOf(c) + (c.metOn ? " · " + fmtDate(c.metOn) : "")) : null,
+        web ? h("div", null, h("a", { class: "weblink", href: web, target: "_blank", rel: "noopener noreferrer", onclick: e => e.stopPropagation() }, prettyUrl(web), icon("out"))) : null),
+      acts));
+  });
+  const count = h("div", { class: "car-count", text: list.length > 1 ? `1 of ${list.length} · swipe for the next card` : "1 card" });
+  let raf = 0;
+  track.addEventListener("scroll", () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const first = track.firstElementChild; if (!first) return;
+      const step = first.getBoundingClientRect().width + 16, i = Math.min(list.length - 1, Math.max(0, Math.round(track.scrollLeft / step)));
+      count.textContent = `${i + 1} of ${list.length}`;
+    });
+  }, { passive: true });
+  return h("div", null, track, count);
+}
 function stackEl(list) {
   const wrap = h("div", { class: "stack" });
   list.forEach(c => {
@@ -924,7 +971,10 @@ function closeTop() {
   if (!$("#detailSheet").hidden) { closeSheet($("#detailSheet")); return true; }
   return false;
 }
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeTop(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeTop();
+  else if ((e.key === "ArrowRight" || e.key === "ArrowLeft") && !$("#detailSheet").hidden && $("#scanSheet").hidden && $("#setSheet").hidden && !/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || "")) slideDetail(e.key === "ArrowRight" ? 1 : -1);
+});
 if (N && N.onBack) N.onBack(() => closeTop());
 
 /* =========================================================
@@ -1471,7 +1521,51 @@ function showSaveState() { const b = $("#saveCard"); if (b) { b.disabled = scan.
 let detailId = null;
 const findCard = id => allCards().find(c => c.id === id) || null;
 function refreshDetail() { if (detailId && !$("#detailSheet").hidden) { const c = findCard(detailId); if (c) renderDetail(c); else closeSheet($("#detailSheet")); } }
-function openDetail(id) { const c = findCard(id); if (!c) return; detailId = id; haptic("light"); renderDetail(c); openSheet($("#detailSheet")); }
+let detailList = [];
+function openDetail(id) {
+  const c = findCard(id); if (!c) return;
+  detailList = visible().map(x => x.id); if (!detailList.includes(id)) detailList = [id];
+  detailId = id; haptic("light"); renderDetail(c); openSheet($("#detailSheet"));
+}
+function canStep(dir) { const i = detailList.indexOf(detailId), j = i + dir; return i >= 0 && j >= 0 && j < detailList.length && !!findCard(detailList[j]); }
+// slide the current card out, the next one in
+let sliding = false;
+function slideDetail(dir) {
+  const body = $("#detailBody");
+  if (sliding || !canStep(dir)) { body.style.transition = "transform .18s ease"; body.style.transform = `translateX(${dir > 0 ? -18 : 18}px)`; setTimeout(() => { body.style.transform = ""; }, 160); return; }
+  sliding = true;
+  body.style.transition = "transform .2s ease-in, opacity .2s ease-in"; body.style.transform = `translateX(${dir > 0 ? -105 : 105}%)`; body.style.opacity = "0";
+  setTimeout(() => {
+    detailId = detailList[detailList.indexOf(detailId) + dir]; renderDetail(findCard(detailId)); haptic("light");
+    $("#detailSheet .sheet-panel").scrollTop = 0;
+    body.style.transition = "none"; body.style.transform = `translateX(${dir > 0 ? 45 : -45}%)`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      body.style.transition = "transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s"; body.style.transform = ""; body.style.opacity = "";
+      setTimeout(() => { sliding = false; }, 280);
+    }));
+  }, 190);
+}
+(() => {  // finger-following swipe on the detail sheet; vertical scrolling stays native
+  const body = $("#detailBody"); let sx = 0, sy = 0, dx = 0, active = false, decided = false, horiz = false, pid = null, suppress = false;
+  body.addEventListener("pointerdown", e => { if (e.pointerType === "mouse" && e.button !== 0) return; sx = e.clientX; sy = e.clientY; dx = 0; active = true; decided = false; horiz = false; pid = e.pointerId; });
+  body.addEventListener("pointermove", e => {
+    if (!active || e.pointerId !== pid || sliding) return;
+    const mx = e.clientX - sx, my = e.clientY - sy;
+    if (!decided) { if (Math.abs(mx) < 10 && Math.abs(my) < 10) return; decided = true; horiz = Math.abs(mx) > Math.abs(my) * 1.2; if (horiz) { try { body.setPointerCapture(pid); } catch {} } }
+    if (!horiz) return;
+    dx = mx; const edge = !canStep(dx < 0 ? 1 : -1);
+    body.style.transition = "none"; body.style.transform = `translateX(${edge ? dx * 0.25 : dx}px)`; body.style.opacity = String(1 - Math.min(0.3, Math.abs(dx) / 1000));
+  });
+  const end = () => {
+    if (!active) return; active = false; if (!horiz) return;
+    suppress = Math.abs(dx) > 10;
+    const dir = dx < -64 ? 1 : dx > 64 ? -1 : 0;
+    if (dir && canStep(dir)) { slideDetail(dir); return; }
+    body.style.transition = "transform .22s cubic-bezier(.2,.8,.2,1), opacity .22s"; body.style.transform = ""; body.style.opacity = "";
+  };
+  body.addEventListener("pointerup", end); body.addEventListener("pointercancel", end);
+  body.addEventListener("click", e => { if (suppress) { e.stopPropagation(); e.preventDefault(); suppress = false; } }, true);
+})();
 function act(label, href, ic, primary) { const ext = href.startsWith("https:"); return h("a", { class: "act" + (primary ? " primary" : ""), href, target: ext ? "_blank" : null, rel: ext ? "noopener noreferrer" : null }, h("span", { class: "o" }, icon(ic)), label); }
 function renderDetail(c) {
   const body = $("#detailBody"), foot = $("#detailFoot"); body.textContent = ""; foot.textContent = "";
@@ -1501,6 +1595,11 @@ function renderDetail(c) {
   }
   body.append(tilt);
   if (c.back) body.append(h("div", { class: "flip-hint" }, icon("swap"), "Tap the card to see the back"));
+  const idx = detailList.indexOf(c.id);
+  if (detailList.length > 1 && idx >= 0) body.append(h("div", { class: "dnav" },
+    h("button", { class: "round", type: "button", "aria-label": "Previous card", disabled: idx <= 0, onclick: () => slideDetail(-1) }, icon("chevL")),
+    h("span", { class: "count", text: `${idx + 1} of ${detailList.length}` }),
+    h("button", { class: "round", type: "button", "aria-label": "Next card", disabled: idx >= detailList.length - 1, onclick: () => slideDetail(1) }, icon("chevR"))));
 
   const badges = h("div", { class: "badges" });
   if (c.example) badges.append(h("span", { class: "badge", text: "Example" }));
@@ -1639,7 +1738,9 @@ function renderSettings() {
   const seg = h("div", { class: "seg", role: "group", "aria-label": "Theme" });
   [["", "System"], ["dark", "Dark"], ["light", "Light"]].forEach(([v, l]) => seg.append(h("button", { type: "button", "aria-pressed": String((prefs.theme || "") === v), onclick: () => { prefs.theme = v; savePrefs(); applyTheme(); renderSettings(); } }, l)));
   ap.append(seg); b.append(ap);
-  b.append(h("section", { class: "set-group" }, h("h3", { text: "About" }), h("p", { text: `Kardly 1.0 · ${storageLine()}.` })));
+  const about = h("p", { text: `Kardly · ${storageLine()}.` });
+  b.append(h("section", { class: "set-group" }, h("h3", { text: "About" }), about));
+  if (N && N.appInfo) N.appInfo().then(i => { about.textContent = `Kardly ${i.version} (build ${i.build}) · ${storageLine()}.`; }).catch(() => {});
 }
 $("#openSettings").onclick = openSettings; $("#tabMore").onclick = openSettings; $("#setClose").onclick = () => closeSheet($("#setSheet"));
 $("#tabCards").onclick = () => { closeTop(); window.scrollTo({ top: 0, behavior: "smooth" }); };

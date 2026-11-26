@@ -14,8 +14,12 @@ app/android/local.properties
 # signing secrets: never commit these (CI reads them from GitHub Actions secrets)
 *.jks
 *.keystore
+!app/android/app/ci-debug.keystore
 keystore.properties
 
 # local bundles
 *.zip
 .DS_Store
+
+# your GitHub Actions secret values (never commit)
+github-secrets.txt

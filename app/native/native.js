@@ -214,5 +214,6 @@ window.KardlyNative = {
   cvUrl: "vendor/opencv.js",
   pickPhoto, scanCard, saveFile, openUrl, haptic, getKey, setKey, setDark, readCard,
   onBack(cb) { backCb = cb; },
+  appInfo() { return App.getInfo(); },
   ready() {}
 };
