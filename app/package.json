@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.7.0",
+    "@capacitor-mlkit/document-scanner": "^8.2.2",
+    "@capacitor-mlkit/text-recognition": "^8.2.2",
     "@capacitor/android": "8.6.0",
     "@capacitor/app": "8.1.2",
     "@capacitor/app-launcher": "8.0.1",
@@ -20,6 +22,7 @@
     "@capacitor/share": "8.0.3",
     "@techstark/opencv-js": "^4.10.0-release.1",
     "@tesseract.js-data/eng": "1.0.0",
+    "libphonenumber-js": "^1.13.16",
     "tesseract.js": "7.0.0",
     "tesseract.js-core": "7.0.0"
   },

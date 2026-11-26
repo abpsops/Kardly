@@ -21,7 +21,8 @@ cpSync(nm + "@techstark/opencv-js/dist/opencv.js", www + "vendor/opencv.js");
 cpSync(nm + "tesseract.js/dist/tesseract.min.js", www + "vendor/tesseract/tesseract.min.js");
 cpSync(nm + "tesseract.js/dist/worker.min.js", www + "vendor/tesseract/worker.min.js");
 for (const f of readdirSync(nm + "tesseract.js-core")) {
-  if (/^tesseract-core.*lstm\.(wasm\.js|js|wasm)$/.test(f)) cpSync(nm + "tesseract.js-core/" + f, www + "vendor/tesseract/core/" + f);
+  // the backup OCR engine: one self-contained build per CPU feature level
+  if (/^tesseract-core.*lstm\.wasm\.js$/.test(f)) cpSync(nm + "tesseract.js-core/" + f, www + "vendor/tesseract/core/" + f);
 }
 // Android's packager un-gzips *.gz assets, so ship the language data already uncompressed.
 writeFileSync(www + "vendor/tesseract/lang/eng.traineddata", gunzipSync(readFileSync(nm + "@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz")));

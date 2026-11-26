@@ -90,23 +90,21 @@ body {
 }
 /* the aurora: three soft colour fields fixed behind every glass surface */
 .aurora { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; background: var(--bg); }
-.aurora i { position: absolute; border-radius: 50%; filter: blur(60px); animation: drift 24s ease-in-out infinite alternate; }
+.aurora i { position: absolute; border-radius: 50%; }
 .aurora i:nth-child(1) { width: 70vmax; height: 70vmax; left: -25vmax; top: -22vmax; background: radial-gradient(circle, var(--blob-1), transparent 65%); }
 .aurora i:nth-child(2) { width: 65vmax; height: 65vmax; right: -28vmax; top: 18vh; background: radial-gradient(circle, var(--blob-2), transparent 65%); animation-delay: -8s; }
 .aurora i:nth-child(3) { width: 60vmax; height: 60vmax; left: -10vmax; bottom: -30vmax; background: radial-gradient(circle, var(--blob-3), transparent 65%); animation-delay: -16s; }
-@keyframes drift { to { transform: translate3d(6vmax, 4vmax, 0) scale(1.08); } }
 .app { position: relative; z-index: 1; }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sheet-bg); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sheet-bg); }
 body.locked { overflow: hidden; }
 button, input, select, textarea { font: inherit; color: inherit; }
 a { color: var(--emerald); }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 8px; }
 .app { max-width: 1120px; margin: 0 auto; }
 /* frosted glass on every surface */
-.icon-btn, .search input, .seg, .sort, .chip, .banner, .round, .btn:not(.gold), .group, .note, .ai, .set-group, .opt,
-.field input, .field textarea, .stage-wrap, .add-back, .act .o, .coin .disc, .dock, .li .thumb, .viewfinder, .confirm, .badge {
-  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
-}
+/* real blur only where it shows and stays cheap: the dock and the search bar. Everything else is tinted glass
+   over the soft aurora, which looks the same without the per-frame cost on phones. */
+.dock, .search input { -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); }
 .serif { font-family: var(--f-display); font-weight: 800; }
 
 /* ---------- top bar ---------- */
@@ -172,13 +170,13 @@ a { color: var(--emerald); }
 .sc::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(255, 255, 255, .18), transparent 30%); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35); pointer-events: none; }
 .sc:hover, .sc:focus-visible { transform: translateY(-14px); box-shadow: var(--lift-shadow); z-index: 2; }
 .sc .tagline { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; align-items: center; z-index: 1; }
-.pill { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(10, 26, 61, .6); border: 1px solid rgba(255, 255, 255, .3); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #F2F5F3; font-size: .72rem; font-weight: 700; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); max-width: 58cqw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pill { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(10, 26, 61, .6); border: 1px solid rgba(255, 255, 255, .3); color: #F2F5F3; font-size: .72rem; font-weight: 700; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); max-width: 58cqw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pill.gold { background: var(--gold-grad); color: var(--gold-ink); }
 .pill.ex { background: rgba(10, 26, 61, .72); color: #A9D6FF; letter-spacing: .08em; text-transform: uppercase; font-size: .64rem; }
 .stack-foot { text-align: center; color: var(--faint); font-size: .8rem; margin-top: 18px; }
 
 /* ---------- list ---------- */
-.group-h { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 3; background: var(--sheet-bg); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); padding-inline: 10px; border-radius: 12px; margin: 22px 0 4px; padding: 8px 0; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line); }
+.group-h { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 3; background: var(--sheet-bg); padding-inline: 10px; border-radius: 12px; margin: 22px 0 4px; padding: 8px 0; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line); }
 .group-h h2 { margin: 0; font-family: var(--f-display); font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; line-height: 1.1; text-wrap: balance; overflow-wrap: anywhere; }
 .group-h span { color: var(--faint); font-size: .78rem; font-weight: 700; flex: none; }
 .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 0 28px; margin-top: 12px; }
@@ -228,7 +226,7 @@ a { color: var(--emerald); }
 
 /* ---------- sheets ---------- */
 .sheet { position: fixed; inset: 0; z-index: 40; background: var(--scrim); display: flex; justify-content: center; align-items: stretch; animation: fade .2s ease; }
-.sheet-panel { position: relative; background: var(--sheet-bg); -webkit-backdrop-filter: blur(40px) saturate(1.6); backdrop-filter: blur(40px) saturate(1.6); width: 100%; max-width: 760px; height: 100%; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; animation: rise .32s cubic-bezier(.2, .8, .2, 1); }
+.sheet-panel { position: relative; background: radial-gradient(70vmax 70vmax at -20% -15%, var(--blob-1), transparent 62%), radial-gradient(60vmax 60vmax at 120% 35%, var(--blob-2), transparent 62%), var(--bg); width: 100%; max-width: 760px; height: 100%; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; animation: rise .32s cubic-bezier(.2, .8, .2, 1); }
 @keyframes fade { from { opacity: 0; } }
 @keyframes rise { from { transform: translateY(24px); opacity: .4; } }
 @media (min-width: 820px) { .sheet { padding: 28px; align-items: center; } .sheet-panel { height: auto; max-height: 100%; border-radius: 24px; border: 1px solid var(--line-strong); box-shadow: var(--lift-shadow); } }
@@ -705,7 +703,7 @@ const Store = {
   async remove(card) {
     if (this.mode === "cloud") await this.cardCol.doc(card.id).delete();
     else { if (this.mode === "local") await IDB.del("cards", card.id); this.cards = this.cards.filter(c => c.id !== card.id); render(); }
-    await this.removeImage(card.front); await this.removeImage(card.back);
+    await this.removeImage(card.front); await this.removeImage(card.back); await this.removeImage(card.thumb);
   }
 };
 async function blobToDataUrlUnder(blob, maxChars) {
@@ -889,7 +887,7 @@ function stackEl(list) {
   list.forEach(c => {
     const t = titleOf(c);
     wrap.append(h("button", { class: "sc", type: "button", "aria-label": `Open ${t}`, onclick: () => openDetail(c.id) },
-      cardImg(c.front, `${t}'s card`),
+      cardImg(c.thumb || c.front, `${t}'s card`),
       h("span", { class: "tagline" },
         c.example ? h("span", { class: "pill ex", text: "Example" }) : null,
         isDue(c) ? h("span", { class: "pill gold", text: "Follow up" }) : null,
@@ -906,7 +904,7 @@ function rowEl(c) {
   if (web) acts.append(h("a", { class: "round", href: web, target: "_blank", rel: "noopener noreferrer", "aria-label": `Website of ${t}` }, icon("globe")));
   if (ph) acts.append(h("a", { class: "round", href: ph.tel, "aria-label": `Call ${t}` }, icon("phone")));
   return h("article", { class: "li" },
-    h("button", { class: "thumb", type: "button", "aria-label": `Open ${t}`, onclick: open }, cardImg(c.front, "")),
+    h("button", { class: "thumb", type: "button", "aria-label": `Open ${t}`, onclick: open }, cardImg(c.thumb || c.front, "")),
     h("div", { class: "li-text", onclick: open },
       h("h3", { text: t }), sub ? h("p", { text: sub }) : null,
       metOf(c) ? h("span", { class: "met" }, icon("pin"), metOf(c) + (c.metOn ? " · " + fmtDate(c.metOn) : "")) : null,
@@ -1181,7 +1179,9 @@ function showStep() {
   $("#skipBack").hidden = !(s === "pick" && scan.target === "back");
   const head = $("#pickHead"); head.textContent = "";
   if (scan.target === "back") { head.append("Now the ", h("em", { text: "back" }), ", if it has one"); $("#pickLede").textContent = "Optional. Turn the card over and photograph it the same way."; }
-  else { head.append("Place the card, ", h("em", { text: "we'll do the rest" })); $("#pickLede").textContent = "Kardly finds the edges, straightens the card and crops it to its exact size."; }
+  else { head.append("Place the card, ", h("em", { text: "we'll do the rest" })); $("#pickLede").textContent = N && N.scanCard
+    ? "Google's scanner finds the card's edges as you aim, captures it automatically and straightens it. Scan the front, then the back if it has one. To use a photo you already took, tap the gallery icon inside the scanner."
+    : "Kardly finds the edges, straightens the card and crops it to its exact size."; }
   const foot = $("#scanFoot"); foot.textContent = "";
   if (s === "pick") {
     if (scan.sides.front) foot.append(h("button", { class: "btn", type: "button", onclick: () => { scan.step = "review"; showStep(); } }, "Back to details"));
@@ -1199,6 +1199,13 @@ function showStep() {
 $("#scanClose").onclick = closeScan;
 $("#scanBack").onclick = () => { if (scan.step === "crop") scan.step = "pick"; else if (scan.step === "pick" && scan.sides.front) scan.step = "review"; showStep(); };
 async function pick(source) {
+  if (N && N.scanCard && source === "camera") {
+    const pages = scan.target === "front" && !scan.editing ? 2 : 1;
+    let r; try { r = await N.scanCard({ pages }); } catch { r = { unavailable: true }; }
+    if (r && r.blobs) { await acceptScans(r.blobs); return; }
+    if (r && r.cancelled) return;
+    toast(r && r.installing ? "Google's card scanner is still downloading. Using the camera for now." : "Google's card scanner isn't available on this phone. Using the camera instead.");
+  }
   if (N && N.pickPhoto) {
     try { const blob = await N.pickPhoto(source); if (blob) takeFile(blob); }
     catch (e) { if (!(e && e.cancelled)) toast(e && e.message ? e.message : "Couldn't open the camera."); }
@@ -1212,9 +1219,23 @@ $("#skipBack").onclick = () => { scan.step = "review"; showStep(); };
 $("#camIn").onchange = e => { const f = e.target.files && e.target.files[0]; if (f) takeFile(f); };
 $("#galIn").onchange = e => { const f = e.target.files && e.target.files[0]; if (f) takeFile(f); };
 
-async function fileToCanvas(file) {
+// Pages from Google's scanner arrive already found, straightened and cropped: go straight to the details.
+async function acceptScans(blobs) {
+  if ($("#scanSheet").hidden) openScan();
+  const keys = scan.target === "back" ? ["back"] : ["front", "back"];
+  for (let i = 0; i < Math.min(blobs.length, keys.length); i++) {
+    const src = await fileToCanvas(blobs[i], 1600), out = await canvasToBlob(src, "image/jpeg", 0.92);
+    const prev = scan.sides[keys[i]]; if (prev && prev.url) URL.revokeObjectURL(prev.url);
+    scan.sides[keys[i]] = { src, quad: defaultQuad(src, 0), ratio: "measured", adjusted: true, found: true, blob: out, url: URL.createObjectURL(out), w: src.width, h: src.height, stored: null, dirty: true };
+  }
+  haptic("medium"); scan.step = "review"; showStep(); runAi();
+}
+async function makeThumb(blob) {
+  const c = await fileToCanvas(blob, 720); return canvasToBlob(c, "image/jpeg", 0.82);
+}
+async function fileToCanvas(file, maxSide = 2800) {
   let bmp; try { bmp = await createImageBitmap(file, { imageOrientation: "from-image" }); } catch { bmp = await blobToImage(file); }
-  const W = bmp.width, H = bmp.height, s = Math.min(1, 2800 / Math.max(W, H)), c = mkCanvas(W * s, H * s);
+  const W = bmp.width, H = bmp.height, s = Math.min(1, maxSide / Math.max(W, H)), c = mkCanvas(W * s, H * s);
   const x = c.getContext("2d", { willReadFrequently: true }); x.imageSmoothingQuality = "high"; x.drawImage(bmp, 0, 0, c.width, c.height); if (bmp.close) bmp.close(); return c;
 }
 function defaultQuad(src, inset = 0.05) { const W = src.width, H = src.height, ix = W * inset, iy = H * inset; return [[ix, iy], [W - ix, iy], [W - ix, H - iy], [ix, H - iy]]; }
@@ -1428,10 +1449,12 @@ async function saveScan() {
   try {
     const refs = {};
     for (const key of ["front", "back"]) { const s = scan.sides[key]; refs[key] = !s ? null : (s.blob && s.dirty) ? await Store.putImage(s.blob, id + "_" + key[0] + "_" + Date.now().toString(36), s.w, s.h) : (s.stored || null); }
-    const card = Object.assign({}, data, { id, front: refs.front, back: refs.back, accent: scan.accent || (old && old.accent) || null, createdAt: old ? old.createdAt : Date.now(), updatedAt: Date.now() });
+    const f = scan.sides.front;
+    refs.thumb = f && f.blob && f.dirty ? await Store.putImage(await makeThumb(f.blob), id + "_t_" + Date.now().toString(36), f.w, f.h).catch(() => null) : (old && old.thumb) || null;
+    const card = Object.assign({}, data, { id, front: refs.front, back: refs.back, thumb: refs.thumb, accent: scan.accent || (old && old.accent) || null, createdAt: old ? old.createdAt : Date.now(), updatedAt: Date.now() });
     await Store.save(card);
     if (data.met) lsSet("kardly.lastMet", data.met);
-    if (old) { if (old.front && (!refs.front || refs.front.id !== old.front.id)) Store.removeImage(old.front); if (old.back && (!refs.back || refs.back.id !== old.back.id)) Store.removeImage(old.back); }
+    if (old) { if (old.front && (!refs.front || refs.front.id !== old.front.id)) Store.removeImage(old.front); if (old.back && (!refs.back || refs.back.id !== old.back.id)) Store.removeImage(old.back); if (old.thumb && (!refs.thumb || refs.thumb.id !== old.thumb.id)) Store.removeImage(old.thumb); }
     scan.saving = false; closeScan(); haptic("success");
     toast(old ? "Changes saved" : `${card.name || card.company} is in your wallet`);
     if (old && !$("#detailSheet").hidden) openDetail(card.id);
@@ -1455,7 +1478,7 @@ function renderDetail(c) {
   const t = titleOf(c);
   $("#detailTitle").textContent = c.example ? "Example card" : (c.company || "Card");
   $("#detailEdit").hidden = !!c.example; $("#detailEdit").onclick = () => openScan(c);
-  const aura = $("#aura"); aura.textContent = ""; aura.append(cardImg(c.front, ""));
+  const aura = $("#aura"); aura.textContent = ""; aura.append(cardImg(c.thumb || c.front, ""));
 
   const ratio = c.front && c.front.w ? c.front.w / c.front.h : 1.75;
   const glossF = h("span", { class: "gloss" }), glossB = h("span", { class: "gloss" });
@@ -1625,7 +1648,7 @@ $("#tabCards").onclick = () => { closeTop(); window.scrollTo({ top: 0, behavior:
    Wiring
    ========================================================= */
 document.querySelectorAll("[data-scan]").forEach(b => b.addEventListener("click", () => { haptic("light"); openScan(); }));
-$("#q").addEventListener("input", e => { filt.q = e.target.value; render(); });
+let qTimer; $("#q").addEventListener("input", e => { filt.q = e.target.value; clearTimeout(qTimer); qTimer = setTimeout(render, 120); });
 document.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => { prefs.view = b.dataset.view; savePrefs(); render(); }));
 $("#sort").onchange = e => { prefs.sort = e.target.value; savePrefs(); render(); };
 $("#detailClose").onclick = () => closeSheet($("#detailSheet"));
@@ -1648,7 +1671,11 @@ drawExamples();
 render();
 Store.init().catch(e => { console.error(e); Store.mode = "memory"; Store.loaded = true; render(); });
 if (!N && window.claude && typeof window.claude.use === "function") window.claude.use("downloads").then(d => { downloadsCap = d; refreshDetail(); }).catch(() => {});
+if (N && N.scanCard) {   // Android: Google's scanner is the main path; manual crop stays as a fallback
+  $("#pickCam").lastChild.textContent = "Scan card";
+  $("#pickGal").lastChild.textContent = "Crop a photo myself";
+}
 if (N && N.ready) N.ready();
-window.__kardly = { detectJS, detectCV, refineEdges, loadCV, outputSize, scan, Store, render, takeFile };
+window.__kardly = { detectJS, detectCV, refineEdges, loadCV, outputSize, scan, Store, render, takeFile, acceptScans };
 })();
 </script>

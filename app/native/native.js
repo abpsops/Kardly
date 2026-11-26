@@ -9,6 +9,8 @@ import { Haptics, ImpactStyle, NotificationType } from "@capacitor/haptics";
 import { Preferences } from "@capacitor/preferences";
 import { App } from "@capacitor/app";
 import Anthropic from "@anthropic-ai/sdk";
+import { DocumentScanner } from "@capacitor-mlkit/document-scanner";
+import { TextRecognition, Script } from "@capacitor-mlkit/text-recognition";
 import { parseCard } from "./parse.js";
 
 const KEY_PREF = "anthropic_api_key";
@@ -38,6 +40,29 @@ async function pickPhoto(source) {
   if (!src) throw new Error("The photo couldn't be read.");
   const resp = await fetch(src);
   return await resp.blob();
+}
+
+/* ---------- Google ML Kit document scanner: live edge detection, auto-capture, perspective crop ---------- */
+async function scanCard({ pages = 2 } = {}) {
+  let available = false;
+  try { ({ available } = await DocumentScanner.isGoogleDocumentScannerModuleAvailable()); }
+  catch { return { unavailable: true }; }
+  if (!available) {
+    DocumentScanner.installGoogleDocumentScannerModule().catch(() => {});
+    return { unavailable: true, installing: true };
+  }
+  let res;
+  try {
+    res = await DocumentScanner.scanDocument({ galleryImportAllowed: true, pageLimit: pages, resultFormats: "JPEG", scannerMode: "FULL" });
+  } catch (e) {
+    if (isCancel(e)) return { cancelled: true };
+    return { unavailable: true, error: String((e && e.message) || e) };
+  }
+  const uris = (res && res.scannedImages) || [];
+  if (!uris.length) return { cancelled: true };
+  const blobs = [];
+  for (const u of uris) { const r = await fetch(Capacitor.convertFileSrc(u)); blobs.push(await r.blob()); }
+  return { blobs };
 }
 
 /* ---------- files: write to cache, then open the Android share sheet ---------- */
@@ -135,7 +160,31 @@ function getWorker(onStatus) {
   }
   return workerP;
 }
+// Google ML Kit text recognition (on-device, fast, accurate on photos). Lines keep their size and position.
+async function ocrMLKit(blobs) {
+  const lines = [];
+  for (let i = 0; i < blobs.length; i++) {
+    const { uri } = await Filesystem.writeFile({ path: `ocr/side${i}-${Date.now()}.jpg`, data: await blobToBase64(blobs[i]), directory: Directory.Cache, recursive: true });
+    const r = await TextRecognition.processImage({ path: uri, script: Script.Latin });
+    (r.blocks || []).forEach((b, bi) => (b.lines || []).forEach(ln => {
+      const bb = ln.boundingBox || {};
+      lines.push({ text: ln.text || "", h: (bb.bottom - bb.top) || 0, y: bb.top || 0, x: bb.left || 0, block: i * 1000 + bi, side: i, conf: 100 });
+    }));
+  }
+  return lines;
+}
 async function readOnDevice(blobs, onStatus) {
+  try {
+    if (onStatus) onStatus("Reading the card…");
+    const lines = await ocrMLKit(blobs);
+    if (lines.length) { const out = parseCard(lines, { region: deviceRegion() }); out._via = "on this phone"; return out; }
+  } catch (e) { console.warn("ML Kit text recognition unavailable, using Tesseract", e); }
+  return readWithTesseract(blobs, onStatus);
+}
+function deviceRegion() {
+  try { const r = new Intl.Locale(navigator.language).maximize().region; return r || "AE"; } catch { return "AE"; }
+}
+async function readWithTesseract(blobs, onStatus) {
   if (onStatus) onStatus("Preparing on-phone reading…");
   const w = await getWorker(onStatus);
   const lines = [];
@@ -145,7 +194,7 @@ async function readOnDevice(blobs, onStatus) {
       lines.push({ text: ln.text || "", h: ln.bbox ? ln.bbox.y1 - ln.bbox.y0 : 0, conf: ln.confidence || 0 });
     }
   }
-  const out = parseCard(lines);
+  const out = parseCard(lines, { region: deviceRegion() });
   out._via = "on this phone";
   return out;
 }
@@ -163,7 +212,7 @@ async function readCard(blobs, { signal, prompt, onStatus } = {}) {
 window.KardlyNative = {
   isNative: Capacitor.isNativePlatform(),
   cvUrl: "vendor/opencv.js",
-  pickPhoto, saveFile, openUrl, haptic, getKey, setKey, setDark, readCard,
+  pickPhoto, scanCard, saveFile, openUrl, haptic, getKey, setKey, setDark, readCard,
   onBack(cb) { backCb = cb; },
   ready() {}
 };
