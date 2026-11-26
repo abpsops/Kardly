@@ -1,0 +1,21 @@
+# dependencies and generated web bundle
+node_modules/
+app/www/
+
+# Android build output
+app/android/.gradle/
+app/android/.kotlin/
+app/android/build/
+app/android/app/build/
+app/android/local.properties
+*.apk
+*.aab
+
+# signing secrets: never commit these (CI reads them from GitHub Actions secrets)
+*.jks
+*.keystore
+keystore.properties
+
+# local bundles
+*.zip
+.DS_Store

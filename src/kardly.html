@@ -1,0 +1,1640 @@
+<title>Kardly</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com" data-web-only>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin data-web-only>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" data-web-only>
+<style>
+/* Layout: an app shell. Brand bar, a serif hero with wallet stats, search, a horizontal rail of company coins,
+   then the cards as an overlapping leather-wallet stack (or a list). A glass dock with a gold scan button sits at the bottom.
+   Card details, scanning and settings open as full-height sheets. Dark-first: obsidian green with brass. */
+:root {
+  --bg: #080D0B;
+  --glow: rgba(46, 191, 143, 0.16);
+  --glow-2: rgba(221, 179, 106, 0.08);
+  --surface: #111916;
+  --surface-2: #17211D;
+  --surface-3: #1E2A25;
+  --glass: rgba(17, 25, 22, 0.74);
+  --line: rgba(232, 240, 235, 0.08);
+  --line-strong: rgba(232, 240, 235, 0.16);
+  --ink: #EDF2EE;
+  --muted: #8C9B94;
+  --faint: #5F6E67;
+  --emerald: #3CCB9C;
+  --emerald-deep: #0E6B57;
+  --on-emerald: #03140E;
+  --gold: #DDB36A;
+  --gold-soft: rgba(221, 179, 106, 0.13);
+  --gold-line: rgba(221, 179, 106, 0.34);
+  --gold-grad: linear-gradient(135deg, #F3D693 0%, #D3A24C 48%, #A9781F 100%);
+  --gold-ink: #1C1406;
+  --danger: #FF8A80;
+  --danger-soft: rgba(255, 138, 128, 0.12);
+  --shade: rgba(2, 5, 4, 0.62);
+  --scrim: rgba(2, 5, 4, 0.66);
+  --card-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 22px 44px -16px rgba(0, 0, 0, 0.8), 0 6px 14px rgba(0, 0, 0, 0.38);
+  --lift-shadow: 0 30px 60px -18px rgba(0, 0, 0, 0.85), 0 10px 22px rgba(0, 0, 0, 0.45);
+  --f-display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --f-ui: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r-card: 14px;
+  --r-ctl: 14px;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #EEF1EE; --glow: rgba(14, 122, 97, 0.10); --glow-2: rgba(169, 122, 34, 0.07);
+    --surface: #FFFFFF; --surface-2: #F6F8F6; --surface-3: #ECF0ED; --glass: rgba(255, 255, 255, 0.8);
+    --line: rgba(13, 25, 21, 0.08); --line-strong: rgba(13, 25, 21, 0.16);
+    --ink: #0D1915; --muted: #5A6962; --faint: #8F9B95;
+    --emerald: #0E7A61; --emerald-deep: #0E6B57; --on-emerald: #FFFFFF;
+    --gold: #9A6E1C; --gold-soft: rgba(169, 122, 34, 0.11); --gold-line: rgba(169, 122, 34, 0.32);
+    --danger: #B3261E; --danger-soft: rgba(179, 38, 30, 0.08);
+    --shade: rgba(6, 12, 10, 0.5); --scrim: rgba(6, 12, 10, 0.42);
+    --card-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 36px -16px rgba(13, 25, 21, 0.35), 0 4px 10px rgba(13, 25, 21, 0.1);
+    --lift-shadow: 0 26px 50px -18px rgba(13, 25, 21, 0.42), 0 8px 18px rgba(13, 25, 21, 0.14);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #EEF1EE; --glow: rgba(14, 122, 97, 0.10); --glow-2: rgba(169, 122, 34, 0.07);
+  --surface: #FFFFFF; --surface-2: #F6F8F6; --surface-3: #ECF0ED; --glass: rgba(255, 255, 255, 0.8);
+  --line: rgba(13, 25, 21, 0.08); --line-strong: rgba(13, 25, 21, 0.16);
+  --ink: #0D1915; --muted: #5A6962; --faint: #8F9B95;
+  --emerald: #0E7A61; --emerald-deep: #0E6B57; --on-emerald: #FFFFFF;
+  --gold: #9A6E1C; --gold-soft: rgba(169, 122, 34, 0.11); --gold-line: rgba(169, 122, 34, 0.32);
+  --danger: #B3261E; --danger-soft: rgba(179, 38, 30, 0.08);
+  --shade: rgba(6, 12, 10, 0.5); --scrim: rgba(6, 12, 10, 0.42);
+  --card-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 36px -16px rgba(13, 25, 21, 0.35), 0 4px 10px rgba(13, 25, 21, 0.1);
+  --lift-shadow: 0 26px 50px -18px rgba(13, 25, 21, 0.42), 0 8px 18px rgba(13, 25, 21, 0.14);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
+html { background: var(--bg); }
+body {
+  margin: 0;
+  background: radial-gradient(900px 520px at 100% -8%, var(--glow), transparent 62%), radial-gradient(700px 420px at -10% 30%, var(--glow-2), transparent 60%), var(--bg);
+  background-repeat: no-repeat;
+  color: var(--ink);
+  font-family: var(--f-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-left: max(18px, env(safe-area-inset-left, 0px));
+  padding-right: max(18px, env(safe-area-inset-right, 0px));
+  padding-block: 0 calc(118px + env(safe-area-inset-bottom, 0px));
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+body.locked { overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--emerald); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 8px; }
+.app { max-width: 1120px; margin: 0 auto; }
+.serif { font-family: var(--f-display); font-weight: 400; }
+
+/* ---------- top bar ---------- */
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 16px 4px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark { width: 36px; height: 36px; flex: none; }
+.wordmark { font-family: var(--f-display); font-size: 1.75rem; line-height: 1; letter-spacing: 0.005em; }
+.wordmark i { color: var(--gold); }
+.icon-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); display: grid; place-items: center; cursor: pointer; color: var(--ink); padding: 0; flex: none; }
+.icon-btn:hover { border-color: var(--line-strong); }
+.icon-btn svg { width: 20px; height: 20px; }
+
+/* ---------- hero ---------- */
+.hero { padding-block: 22px 18px; display: grid; gap: 6px; }
+.eyebrow { margin: 0; font-size: .74rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
+.hero h1 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(2.5rem, 9vw, 3.6rem); line-height: .98; letter-spacing: -0.01em; text-wrap: balance; }
+.hero h1 em { color: var(--gold); }
+.stats { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 6px 0 0; color: var(--muted); font-size: .9rem; font-variant-numeric: tabular-nums; }
+.stats b { color: var(--ink); font-weight: 700; }
+.stats .due { color: var(--gold); cursor: pointer; background: none; border: 0; padding: 0; font: inherit; }
+.stats .due b { color: var(--gold); }
+
+/* ---------- search + rails ---------- */
+.search { position: relative; }
+.search svg { z-index: 1; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 19px; height: 19px; color: var(--muted); pointer-events: none; }
+.search input { width: 100%; height: 52px; border-radius: 16px; border: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 0 16px 0 46px; font-size: 1rem; font-weight: 500; }
+.search input::placeholder { color: var(--faint); }
+.search input:focus { border-color: var(--gold-line); outline: none; box-shadow: 0 0 0 4px var(--gold-soft); }
+
+.rail-wrap { margin-top: 18px; margin-left: calc(-1 * max(18px, env(safe-area-inset-left, 0px))); margin-right: calc(-1 * max(18px, env(safe-area-inset-right, 0px))); }
+.rail { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; padding: 4px max(18px, env(safe-area-inset-right, 0px)) 6px max(18px, env(safe-area-inset-left, 0px)); scroll-snap-type: x proximity; }
+.rail::-webkit-scrollbar { display: none; }
+.coin { flex: none; width: 72px; display: grid; justify-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; scroll-snap-align: start; color: var(--ink); }
+.coin .disc { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 1rem; letter-spacing: .02em; color: #FFFFFF; box-shadow: 0 0 0 1px var(--line) inset, 0 8px 18px -8px rgba(0, 0, 0, .6); position: relative; transition: transform .2s; }
+.coin .disc.all { background: var(--surface-2); color: var(--ink); }
+.coin .disc.all svg { width: 22px; height: 22px; }
+.coin[aria-pressed="true"] .disc { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--gold); transform: translateY(-2px); }
+.coin .nm { font-size: .72rem; font-weight: 600; line-height: 1.25; text-align: center; max-width: 72px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: var(--muted); }
+.coin[aria-pressed="true"] .nm { color: var(--ink); }
+.coin .ct { position: absolute; right: -2px; top: -2px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: var(--surface-3); color: var(--ink); font-size: .68rem; font-weight: 800; display: grid; place-items: center; box-shadow: 0 0 0 2px var(--bg); }
+
+.viewbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3px; }
+.seg button { border: 0; background: none; padding: 7px 13px; border-radius: 9px; font-size: .84rem; font-weight: 700; color: var(--muted); cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.seg button svg { width: 16px; height: 16px; }
+.seg button[aria-pressed="true"] { background: var(--surface-3); color: var(--ink); }
+.sort { height: 38px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); padding: 0 12px; font-size: .84rem; font-weight: 700; color: var(--ink); max-width: 100%; }
+.chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-top: 12px; padding-bottom: 2px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: .8rem; font-weight: 700; cursor: pointer; color: var(--muted); }
+.chip svg { width: 14px; height: 14px; flex: none; }
+.chip[aria-pressed="true"] { background: var(--gold-soft); border-color: var(--gold-line); color: var(--gold); }
+
+.banner { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--gold-line); background: var(--gold-soft); margin-top: 18px; }
+.banner p { margin: 0; font-size: .88rem; max-width: 60ch; color: var(--ink); }
+.banner b { color: var(--gold); }
+
+/* ---------- wallet stack ---------- */
+.stack { container-type: inline-size; max-width: 560px; margin: 26px auto 0; display: grid; }
+.sc { position: relative; display: block; width: 100%; aspect-ratio: 1.75; padding: 0; border: 0; border-radius: var(--r-card); overflow: hidden; background: var(--surface-2); box-shadow: var(--card-shadow); cursor: pointer; transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s; text-align: left; }
+.sc + .sc { margin-top: calc(-57.14cqw + 84px); }
+.sc img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sc::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(255, 255, 255, .10), transparent 26%); pointer-events: none; }
+.sc:hover, .sc:focus-visible { transform: translateY(-14px); box-shadow: var(--lift-shadow); z-index: 2; }
+.sc .tagline { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; align-items: center; z-index: 1; }
+.pill { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: rgba(8, 13, 11, .72); color: #F2F5F3; font-size: .72rem; font-weight: 700; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); max-width: 58cqw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pill.gold { background: var(--gold-grad); color: var(--gold-ink); }
+.pill.ex { background: rgba(8, 13, 11, .72); color: #E8C77F; letter-spacing: .08em; text-transform: uppercase; font-size: .64rem; }
+.stack-foot { text-align: center; color: var(--faint); font-size: .8rem; margin-top: 18px; }
+
+/* ---------- list ---------- */
+.group-h { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 3; background: var(--bg); margin: 22px 0 4px; padding: 8px 0; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line); }
+.group-h h2 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: 1.45rem; line-height: 1.1; text-wrap: balance; overflow-wrap: anywhere; }
+.group-h span { color: var(--faint); font-size: .78rem; font-weight: 700; flex: none; }
+.list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 0 28px; margin-top: 12px; }
+.li { display: grid; grid-template-columns: 96px 1fr auto; gap: 14px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.li .thumb { width: 96px; aspect-ratio: 1.75; border-radius: 8px; overflow: hidden; border: 0; padding: 0; background: var(--surface-2); box-shadow: 0 8px 18px -10px rgba(0, 0, 0, .7); cursor: pointer; position: relative; }
+.li .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.li-text { min-width: 0; cursor: pointer; }
+.li-text h3 { margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+.li-text p { margin: 1px 0 0; color: var(--muted); font-size: .84rem; overflow-wrap: anywhere; }
+.li-text .met { display: inline-flex; gap: 5px; align-items: center; color: var(--faint); font-size: .76rem; margin-top: 3px; }
+.li-text .met svg { width: 13px; height: 13px; }
+.weblink { display: inline-flex; align-items: center; gap: 4px; margin-top: 3px; font-size: .84rem; font-weight: 700; text-decoration: none; color: var(--emerald); overflow-wrap: anywhere; }
+.weblink:hover { text-decoration: underline; }
+.weblink svg { width: 13px; height: 13px; flex: none; }
+.li-acts { display: flex; gap: 6px; }
+.round { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; }
+.round:hover { border-color: var(--gold-line); color: var(--gold); }
+.round svg { width: 17px; height: 17px; }
+@media (max-width: 420px) { .li { grid-template-columns: 78px 1fr; } .li .thumb { width: 78px; } .li-acts { grid-column: 2; } }
+
+.empty { text-align: center; padding: 56px 16px 24px; color: var(--muted); display: grid; justify-items: center; gap: 10px; }
+.empty h2 { font-family: var(--f-display); font-weight: 400; color: var(--ink); margin: 0; font-size: 1.9rem; }
+.empty p { margin: 0; max-width: 40ch; }
+
+/* ---------- buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 18px; border-radius: var(--r-ctl); border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font-weight: 700; font-size: .92rem; cursor: pointer; text-decoration: none; white-space: nowrap; transition: transform .1s, border-color .15s, background .15s; }
+.btn:hover { border-color: var(--muted); }
+.btn:active { transform: scale(.98); }
+.btn:disabled { opacity: .55; cursor: default; }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn.gold { background: var(--gold-grad); border-color: transparent; color: var(--gold-ink); box-shadow: 0 10px 24px -12px rgba(201, 151, 63, .8); }
+.btn.ghost { background: transparent; border-color: transparent; }
+.btn.ghost:hover { background: var(--surface-2); }
+.btn.danger { color: var(--danger); }
+.btn.danger.solid { background: var(--danger); border-color: var(--danger); color: var(--bg); }
+.btn.sm { min-height: 36px; padding: 0 13px; font-size: .82rem; border-radius: 11px; }
+.btn.block { width: 100%; }
+
+/* ---------- dock ---------- */
+.dock { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); z-index: 20; display: flex; align-items: center; gap: 22px; padding: 8px 14px; border-radius: 28px; background: var(--glass); border: 1px solid var(--line-strong); backdrop-filter: blur(22px) saturate(1.3); -webkit-backdrop-filter: blur(22px) saturate(1.3); box-shadow: var(--lift-shadow); }
+.dock .tab { display: grid; justify-items: center; gap: 2px; background: none; border: 0; color: var(--muted); font-size: .68rem; font-weight: 700; cursor: pointer; padding: 6px 10px; min-width: 58px; }
+.dock .tab svg { width: 22px; height: 22px; }
+.dock .tab[aria-current="true"] { color: var(--ink); }
+.scan-btn { width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--gold-grad); color: var(--gold-ink); display: grid; place-items: center; cursor: pointer; margin-top: -26px; box-shadow: 0 0 0 6px var(--bg), 0 16px 30px -10px rgba(201, 151, 63, .9); transition: transform .15s; }
+.scan-btn:active { transform: scale(.95); }
+.scan-btn svg { width: 28px; height: 28px; }
+
+/* ---------- sheets ---------- */
+.sheet { position: fixed; inset: 0; z-index: 40; background: var(--scrim); display: flex; justify-content: center; align-items: stretch; animation: fade .2s ease; }
+.sheet-panel { position: relative; background: var(--bg); width: 100%; max-width: 760px; height: 100%; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; animation: rise .32s cubic-bezier(.2, .8, .2, 1); }
+@keyframes fade { from { opacity: 0; } }
+@keyframes rise { from { transform: translateY(24px); opacity: .4; } }
+@media (min-width: 820px) { .sheet { padding: 28px; align-items: center; } .sheet-panel { height: auto; max-height: 100%; border-radius: 24px; border: 1px solid var(--line-strong); box-shadow: var(--lift-shadow); } }
+.sheet-head { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 10px; padding: calc(env(safe-area-inset-top, 0px) + 12px) max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px)); background: linear-gradient(var(--bg) 70%, transparent); }
+.sheet-head h2 { margin: 0; flex: 1; min-width: 0; font-size: 1rem; font-weight: 700; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sheet-body { padding: 6px max(18px, env(safe-area-inset-right, 0px)) 22px max(18px, env(safe-area-inset-left, 0px)); display: grid; gap: 18px; flex: 1; align-content: start; position: relative; z-index: 1; }
+.sheet-foot { position: sticky; bottom: 0; z-index: 5; display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; padding: 14px max(18px, env(safe-area-inset-right, 0px)) calc(14px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); background: linear-gradient(transparent, var(--bg) 30%); }
+.sheet-foot .spacer { flex: 1; }
+.steps { display: flex; gap: 5px; justify-content: center; }
+.steps i { width: 18px; height: 4px; border-radius: 2px; background: var(--line-strong); }
+.steps i.on { background: var(--gold); }
+.title-stack { flex: 1; display: grid; gap: 6px; justify-items: center; min-width: 0; }
+.lede { margin: 0; color: var(--muted); max-width: 56ch; }
+.h-serif { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: 2.2rem; line-height: 1.02; text-wrap: balance; }
+.h-serif em { color: var(--gold); }
+
+/* pick */
+.viewfinder { position: relative; aspect-ratio: 1.75; max-width: 440px; width: 100%; justify-self: center; border-radius: 18px; background: radial-gradient(circle at 50% 40%, var(--surface-3), var(--surface)); display: grid; place-items: center; overflow: hidden; }
+.viewfinder .ghost-card { width: 62%; aspect-ratio: 1.75; border-radius: 10px; border: 1.5px dashed var(--line-strong); transform: rotate(-6deg); display: grid; place-items: center; color: var(--faint); font-size: .8rem; }
+.viewfinder .br { position: absolute; width: 34px; height: 34px; border: 3px solid var(--gold); }
+.viewfinder .br.a { left: 14%; top: 14%; border-right: 0; border-bottom: 0; border-radius: 8px 0 0 0; }
+.viewfinder .br.b { right: 14%; top: 14%; border-left: 0; border-bottom: 0; border-radius: 0 8px 0 0; }
+.viewfinder .br.c { right: 14%; bottom: 14%; border-left: 0; border-top: 0; border-radius: 0 0 8px 0; }
+.viewfinder .br.d { left: 14%; bottom: 14%; border-right: 0; border-top: 0; border-radius: 0 0 0 8px; }
+.viewfinder .sweep { position: absolute; left: 10%; right: 10%; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); animation: sweep 2.4s ease-in-out infinite; opacity: .8; }
+@keyframes sweep { 0%, 100% { top: 22%; } 50% { top: 76%; } }
+.pick { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.tips { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; color: var(--muted); font-size: .86rem; }
+.tips li { display: flex; gap: 10px; align-items: flex-start; }
+.tips svg { width: 16px; height: 16px; color: var(--gold); flex: none; margin-top: 3px; }
+
+/* crop */
+.stage-wrap { display: grid; justify-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 10px; }
+.stage { position: relative; touch-action: none; user-select: none; -webkit-user-select: none; max-width: 100%; }
+.stage canvas.photo { display: block; border-radius: 8px; max-width: 100%; }
+.stage svg { position: absolute; inset: 0; overflow: visible; touch-action: none; }
+.stage .shade { fill: var(--shade); fill-rule: evenodd; }
+.stage .quad { fill: none; stroke: rgba(243, 214, 147, .75); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.stage .bracket { fill: none; stroke: #E9C06E; stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .6)); }
+.stage .hit { fill: transparent; cursor: grab; }
+.loupe { position: absolute; top: 10px; width: 128px; height: 128px; border-radius: 50%; border: 3px solid #E9C06E; box-shadow: var(--lift-shadow); pointer-events: none; }
+.crop-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
+.crop-note { font-size: .86rem; color: var(--muted); display: flex; gap: 8px; align-items: center; justify-content: center; min-height: 22px; text-align: center; }
+.spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line-strong); border-top-color: var(--gold); animation: spin .8s linear infinite; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.preview-box { display: grid; gap: 8px; justify-items: center; }
+.preview-box canvas { max-width: min(100%, 460px); border-radius: 12px; box-shadow: var(--card-shadow); background: var(--surface); }
+.label { font-size: .7rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+
+/* review */
+.sides { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.side { margin: 0; display: grid; gap: 8px; align-content: start; }
+.shot { position: relative; border-radius: var(--r-card); overflow: hidden; box-shadow: var(--card-shadow); background: var(--surface); max-width: 100%; }
+.shot img { display: block; width: 100%; height: auto; }
+.shot.reading::after { content: ""; position: absolute; left: 0; right: 0; height: 34%; background: linear-gradient(180deg, transparent, rgba(233, 192, 110, .38), transparent); animation: scanline 1.6s ease-in-out infinite; }
+@keyframes scanline { 0% { top: -34%; } 100% { top: 100%; } }
+.side figcaption { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.add-back { aspect-ratio: 1.75; max-width: 100%; border-radius: var(--r-card); border: 1.5px dashed var(--line-strong); background: var(--surface); display: grid; place-content: center; justify-items: center; gap: 4px; cursor: pointer; color: var(--muted); padding: 12px; text-align: center; }
+.add-back:hover { border-color: var(--gold-line); color: var(--ink); }
+.add-back svg { width: 26px; height: 26px; color: var(--gold); }
+.add-back strong { color: var(--ink); }
+.ai { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 12px 14px; border-radius: 14px; background: var(--gold-soft); border: 1px solid var(--gold-line); font-size: .88rem; }
+.ai-msg { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.ai-msg svg { width: 18px; height: 18px; color: var(--gold); flex: none; }
+.fs { border: 0; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); }
+.fs legend { grid-column: 1 / -1; padding: 0; margin-bottom: 2px; font-family: var(--f-display); font-size: 1.4rem; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field.wide { grid-column: 1 / -1; }
+.field label { font-size: .7rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.field input, .field textarea { width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px 14px; font-size: .96rem; font-weight: 500; min-width: 0; }
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--gold-line); box-shadow: 0 0 0 4px var(--gold-soft); }
+.field textarea { resize: vertical; min-height: 70px; }
+.field .mono { font-family: var(--f-mono); font-size: .86rem; }
+.field .hint { font-size: .74rem; color: var(--faint); }
+.field.filled input, .field.filled textarea { border-color: rgba(60, 203, 156, .5); }
+.quick-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.quick-chips .chip { height: 28px; font-size: .76rem; }
+input[type="date"] { color-scheme: inherit; }
+
+/* detail */
+.aura { position: absolute; inset: 0 0 auto 0; height: 520px; pointer-events: none; overflow: hidden; z-index: 0; }
+.aura img { width: 140%; height: 140%; margin: -20% 0 0 -20%; object-fit: cover; filter: blur(60px) saturate(1.4); opacity: .32; }
+.aura::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, var(--bg)); }
+.tilt { perspective: 1200px; justify-self: center; width: 100%; max-width: 520px; }
+.flip { position: relative; width: 100%; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.2, .75, .2, 1); cursor: pointer; }
+.flip.flipped { transform: rotateY(180deg); }
+.face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 16px; overflow: hidden; box-shadow: var(--lift-shadow); background: var(--surface); }
+.face img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.face.back { transform: rotateY(180deg); }
+.face .gloss { position: absolute; inset: 0; background: radial-gradient(circle at var(--gx, 30%) var(--gy, 20%), rgba(255, 255, 255, .22), transparent 45%); mix-blend-mode: soft-light; pointer-events: none; }
+.flip-hint { display: flex; justify-content: center; align-items: center; gap: 8px; font-size: .8rem; color: var(--faint); }
+.flip-hint svg { width: 15px; height: 15px; }
+.who { text-align: center; display: grid; gap: 4px; justify-items: center; }
+.who h2 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(2.1rem, 8vw, 2.8rem); line-height: 1.02; text-wrap: balance; overflow-wrap: anywhere; }
+.who p { margin: 0; color: var(--muted); font-weight: 600; overflow-wrap: anywhere; }
+.badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 11px; border-radius: 999px; font-size: .76rem; font-weight: 700; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.badge svg { width: 14px; height: 14px; }
+.badge.gold { background: var(--gold-soft); color: var(--gold); border-color: var(--gold-line); }
+.acts { display: grid; grid-template-columns: repeat(auto-fit, minmax(68px, 1fr)); gap: 10px; max-width: 520px; width: 100%; justify-self: center; }
+.act { display: grid; justify-items: center; gap: 7px; text-decoration: none; color: var(--ink); font-size: .74rem; font-weight: 700; background: none; border: 0; cursor: pointer; padding: 0; }
+.act .o { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); border: 1px solid var(--line); transition: transform .15s, border-color .15s; }
+.act .o svg { width: 22px; height: 22px; }
+.act.primary .o { background: var(--gold-grad); color: var(--gold-ink); border-color: transparent; box-shadow: 0 12px 26px -12px rgba(201, 151, 63, .9); }
+.act:hover .o { transform: translateY(-2px); border-color: var(--gold-line); }
+.group { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.group-title { padding: 0 4px; margin: 0 0 -8px; }
+.row { display: grid; grid-template-columns: 38px 1fr auto; gap: 12px; align-items: center; padding: 13px 16px; border-top: 1px solid var(--line); min-width: 0; }
+.row:first-child { border-top: 0; }
+.row .ic { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-2); color: var(--gold); }
+.row .ic svg { width: 18px; height: 18px; }
+.row .val { min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.row .val small { display: block; color: var(--faint); font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 1px; }
+.row .val a { font-weight: 700; }
+.row .val .mono { font-family: var(--f-mono); font-size: .9rem; font-weight: 500; user-select: all; }
+.row .row-acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 440px) { .row:has(.row-acts > :nth-child(2)) { grid-template-columns: 38px 1fr; } .row:has(.row-acts > :nth-child(2)) .row-acts { grid-column: 2; justify-content: flex-start; } }
+.note { position: relative; background: var(--gold-soft); border: 1px solid var(--gold-line); border-radius: 18px; padding: 16px 18px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.note .label { color: var(--gold); display: block; margin-bottom: 6px; }
+.meta-line { color: var(--faint); font-size: .8rem; text-align: center; }
+.confirm { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: var(--danger-soft); border: 1px solid var(--danger); border-radius: 16px; padding: 14px 16px; }
+.confirm p { margin: 0; flex: 1; min-width: 180px; }
+
+/* settings */
+.set-group { display: grid; gap: 12px; padding: 18px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); }
+.set-group h3 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: 1.45rem; }
+.set-group p { margin: 0; color: var(--muted); font-size: .88rem; }
+.opt { display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); cursor: pointer; }
+.opt:has(input:checked) { border-color: var(--gold-line); background: var(--gold-soft); }
+.opt input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: #C9973F; }
+.opt strong { display: block; }
+.opt span { color: var(--muted); font-size: .84rem; }
+
+.toast { position: fixed; left: 50%; bottom: calc(104px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 11px 18px; border-radius: 14px; font-size: .9rem; font-weight: 700; z-index: 60; box-shadow: var(--lift-shadow); max-width: calc(100% - 36px); animation: rise .25s ease; }
+.drop-hint { position: fixed; inset: 14px; border: 2px dashed var(--gold); border-radius: 24px; background: var(--scrim); z-index: 70; display: grid; place-items: center; font-family: var(--f-display); font-size: 2rem; color: var(--ink); pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="app">
+  <header class="bar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <defs><linearGradient id="kg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3D693"/><stop offset=".5" stop-color="#D3A24C"/><stop offset="1" stop-color="#A9781F"/></linearGradient></defs>
+        <rect x="2" y="2" width="60" height="60" rx="16" fill="#0E6B57"/>
+        <rect x="14" y="10" width="36" height="22" rx="4" fill="url(#kg)" transform="rotate(-10 32 21)"/>
+        <path d="M2 28h60v20a14 14 0 0 1-14 14H16A14 14 0 0 1 2 48z" fill="#0A4F40"/>
+        <path d="M24 34v20M24 44l10-10M27.5 41 35 54" stroke="url(#kg)" stroke-width="4" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span class="wordmark">Kard<i>ly</i></span>
+    </div>
+    <button class="icon-btn" type="button" id="openSettings" aria-label="Settings and export">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+    </button>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow" id="greet">Good evening</p>
+    <h1><em>Your</em> wallet</h1>
+    <div class="stats" id="stats"><span>Opening…</span></div>
+  </section>
+
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Search people, companies, numbers, events" autocomplete="off" aria-label="Search cards">
+  </div>
+
+  <div class="rail-wrap"><div class="rail" id="rail" aria-label="Filter by company"></div></div>
+
+  <div class="viewbar">
+    <div class="seg" role="group" aria-label="View">
+      <button type="button" data-view="stack" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="9" width="18" height="11" rx="2"/></svg>Wallet</button>
+      <button type="button" data-view="list" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12"/><rect x="3" y="4.5" width="3" height="3" rx="1"/><rect x="3" y="10.5" width="3" height="3" rx="1"/><rect x="3" y="16.5" width="3" height="3" rx="1"/></svg>List</button>
+    </div>
+    <select class="sort" id="sort" aria-label="Sort cards">
+      <option value="recent">Newest first</option>
+      <option value="name">Name A–Z</option>
+      <option value="company">By company</option>
+      <option value="met">By event</option>
+    </select>
+  </div>
+  <div class="chips" id="chips" hidden></div>
+
+  <div class="banner" id="exampleBanner" hidden>
+    <p><b>These 3 cards are examples.</b> Scan your first visiting card and they disappear. Tap one to see what a saved card looks like.</p>
+    <button class="btn sm gold" type="button" data-scan>Scan a card</button>
+  </div>
+
+  <main id="wallet" aria-live="polite"></main>
+</div>
+
+<nav class="dock" aria-label="Main">
+  <button class="tab" type="button" id="tabCards" aria-current="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>Cards
+  </button>
+  <button class="scan-btn" type="button" data-scan aria-label="Scan a card">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M8 12h8"/></svg>
+  </button>
+  <button class="tab" type="button" id="tabMore">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>More
+  </button>
+</nav>
+
+<input type="file" id="camIn" accept="image/*" capture="environment" hidden>
+<input type="file" id="galIn" accept="image/*" hidden>
+
+<!-- Scan sheet -->
+<div class="sheet" id="scanSheet" hidden role="dialog" aria-modal="true" aria-labelledby="scanTitle">
+  <div class="sheet-panel">
+    <div class="sheet-head">
+      <button class="icon-btn" type="button" id="scanBack" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <div class="title-stack"><h2 id="scanTitle">Scan the front</h2><div class="steps" aria-hidden="true"><i></i><i></i><i></i></div></div>
+      <button class="icon-btn" type="button" id="scanClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+
+    <div class="sheet-body" id="stepPick">
+      <h3 class="h-serif" id="pickHead">Place the card, <em>we'll do the rest</em></h3>
+      <p class="lede" id="pickLede">Kardly finds the edges, straightens the card and crops it to its exact size.</p>
+      <div class="viewfinder" aria-hidden="true"><span class="br a"></span><span class="br b"></span><span class="br c"></span><span class="br d"></span><div class="ghost-card">Visiting card</div><div class="sweep"></div></div>
+      <div class="pick">
+        <button class="btn gold" type="button" id="pickCam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l2-2h6l2 2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/></svg>Take a photo</button>
+        <button class="btn" type="button" id="pickGal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>Choose from gallery</button>
+      </div>
+      <ul class="tips">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Use a surface that contrasts with the card, like a dark table.</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>A slight angle is fine. Avoid glare from overhead lights.</li>
+      </ul>
+      <button class="btn ghost" type="button" id="skipBack" hidden>Skip the back side</button>
+    </div>
+
+    <div class="sheet-body" id="stepCrop" hidden>
+      <div class="crop-note" id="cropNote"></div>
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <canvas class="photo" id="stageCanvas"></canvas>
+          <svg id="stageSvg" aria-label="Drag the four corners onto the corners of the card"></svg>
+          <canvas class="loupe" id="loupe" width="256" height="256" hidden></canvas>
+        </div>
+      </div>
+      <div class="crop-tools">
+        <button class="btn sm" type="button" id="cropAuto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg>Auto-detect</button>
+        <button class="btn sm" type="button" id="cropRotate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>Rotate</button>
+        <button class="btn sm" type="button" id="cropFull">Whole photo</button>
+        <select class="sort" id="cropRatio" aria-label="Card size">
+          <option value="auto">Size: auto</option>
+          <option value="1.75">3.5 × 2 in · US, India, Gulf</option>
+          <option value="1.5454">85 × 55 mm · Europe</option>
+          <option value="1.6667">90 × 54 mm · China, Asia</option>
+          <option value="1.5858">Credit-card size</option>
+          <option value="measured">Exact shape</option>
+        </select>
+      </div>
+      <div class="preview-box"><span class="label">Cropped result</span><canvas id="cropPreview" width="640" height="366"></canvas></div>
+    </div>
+
+    <div class="sheet-body" id="stepReview" hidden>
+      <div class="sides" id="sides"></div>
+      <div class="ai" id="aiBar" hidden></div>
+      <form id="cardForm" autocomplete="off" style="display:grid;gap:26px">
+        <fieldset class="fs">
+          <legend>Contact</legend>
+          <div class="field"><label for="f-name">Name</label><input id="f-name" name="name"></div>
+          <div class="field"><label for="f-title">Job title</label><input id="f-title" name="title"></div>
+          <div class="field"><label for="f-company">Company</label><input id="f-company" name="company" list="companyList"></div>
+          <div class="field"><label for="f-website">Website</label><input id="f-website" name="website" inputmode="url" placeholder="www.company.com"></div>
+          <div class="field"><label for="f-phones">Phone numbers</label><textarea id="f-phones" name="phones" class="mono" rows="2" placeholder="+971 50 123 4567 (Mobile)"></textarea><span class="hint">One per line</span></div>
+          <div class="field"><label for="f-emails">Emails</label><textarea id="f-emails" name="emails" class="mono" rows="2"></textarea><span class="hint">One per line</span></div>
+          <div class="field wide"><label for="f-address">Address</label><input id="f-address" name="address"></div>
+          <div class="field"><label for="f-linkedin">LinkedIn</label><input id="f-linkedin" name="linkedin" inputmode="url"></div>
+          <div class="field"><label for="f-links">Other links</label><textarea id="f-links" name="links" rows="2" placeholder="instagram.com/company"></textarea></div>
+        </fieldset>
+        <fieldset class="fs">
+          <legend>How you met</legend>
+          <div class="field wide"><label for="f-met">Where we met</label><input id="f-met" name="met" placeholder="Dubai Expo, client office, referral from Sara…" list="metList"><div class="quick-chips" id="metChips"></div></div>
+          <div class="field"><label for="f-metOn">Met on</label><input id="f-metOn" name="metOn" type="date"></div>
+          <div class="field"><label for="f-followUp">Follow up by</label><input id="f-followUp" name="followUp" type="date"><div class="quick-chips" id="fuChips"></div></div>
+          <div class="field wide"><label for="f-notes">Remarks</label><textarea id="f-notes" name="notes" rows="3" placeholder="What they need, what you promised, anything to remember"></textarea></div>
+          <div class="field wide"><label for="f-tags">Tags</label><input id="f-tags" name="tags" placeholder="Client, Lead, Vendor"><span class="hint">Separate with commas</span></div>
+        </fieldset>
+      </form>
+      <datalist id="companyList"></datalist>
+      <datalist id="metList"></datalist>
+    </div>
+
+    <div class="sheet-foot" id="scanFoot"></div>
+  </div>
+</div>
+
+<!-- Detail sheet -->
+<div class="sheet" id="detailSheet" hidden role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+  <div class="sheet-panel">
+    <div class="aura" id="aura" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <button class="icon-btn" type="button" id="detailClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <h2 id="detailTitle">Card</h2>
+      <button class="icon-btn" type="button" id="detailEdit" aria-label="Edit card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg></button>
+    </div>
+    <div class="sheet-body" id="detailBody"></div>
+    <div class="sheet-foot" id="detailFoot"></div>
+  </div>
+</div>
+
+<!-- Settings sheet -->
+<div class="sheet" id="setSheet" hidden role="dialog" aria-modal="true" aria-labelledby="setTitle">
+  <div class="sheet-panel">
+    <div class="sheet-head">
+      <button class="icon-btn" type="button" id="setClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <h2 id="setTitle">Settings</h2>
+      <span style="width:44px"></span>
+    </div>
+    <div class="sheet-body" id="setBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden role="status"></div>
+<div class="drop-hint" id="dropHint" hidden>Drop the card photo</div>
+
+<script>
+(() => {
+"use strict";
+const N = window.KardlyNative || null;   // present only inside the Android app
+
+/* =========================================================
+   Helpers
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+function h(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k === "text") e.textContent = v;
+    else if (k === "style" && typeof v === "object") Object.assign(e.style, v);
+    else if (k.startsWith("on") && typeof v === "function") e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? "" : String(v));
+  }
+  for (const k of kids.flat()) if (k != null && k !== false) e.append(k.nodeType ? k : document.createTextNode(String(k)));
+  return e;
+}
+const ICON = {
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>',
+  phone: '<path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+  chat: '<path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1c-1-.5-1.5-1-2-2l1-1-1-2z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>',
+  out: '<path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/>',
+  tag: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  crop: '<path d="M6 2v14a2 2 0 0 0 2 2h14M2 6h14a2 2 0 0 1 2 2v14"/>',
+  swap: '<path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/>',
+  download: '<path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/>',
+  share: '<path d="M12 3v13M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',
+  spark: '<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/>',
+  camera: '<path d="M3 8a2 2 0 0 1 2-2h2l2-2h6l2 2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/>',
+  cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  bell: '<path d="M6 9a6 6 0 1 1 12 0c0 6 3 7 3 7H3s3-1 3-7"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'
+};
+function icon(name) {
+  const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("fill", "none"); s.setAttribute("stroke", "currentColor");
+  s.setAttribute("stroke-width", "2"); s.setAttribute("stroke-linecap", "round"); s.setAttribute("stroke-linejoin", "round");
+  s.setAttribute("aria-hidden", "true"); s.innerHTML = ICON[name] || "";
+  return s;
+}
+let toastTimer;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 2600); }
+function haptic(kind) { try { if (N && N.haptic) N.haptic(kind); } catch {} }
+function mkCanvas(w, hh) { const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(hh)); return c; }
+function uid(prefix) { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function lsGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+function canvasToBlob(c, type = "image/jpeg", q = 0.92) { return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error("encode failed")), type, q)); }
+function copyText(text, fallbackEl) {
+  try { navigator.clipboard.writeText(text).then(() => { toast("Copied"); haptic("light"); }, () => selectEl(fallbackEl)); }
+  catch { selectEl(fallbackEl); }
+}
+function selectEl(el) { if (!el) return; const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Selected. Use your keyboard's copy."); }
+const todayISO = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+const addDaysISO = n => { const d = new Date(); d.setDate(d.getDate() + n); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+const isoOk = s => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ""));
+function fmtDate(iso) { if (!isoOk(iso)) return ""; const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }); }
+const isDue = c => isoOk(c.followUp) && c.followUp <= todayISO();
+
+/* ---------- link builders (card values are untrusted) ---------- */
+function webUrl(s) {
+  s = String(s || "").trim(); if (!s) return null;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(s) && !/^https?:/i.test(s)) return null;
+  s = /^https?:\/\//i.test(s) ? s.replace(/^http:/i, "https:") : "https://" + s.replace(/^\/+/, "");
+  try { const u = new URL(s); if (u.protocol !== "https:" || !u.hostname.includes(".") || /\s/.test(u.hostname)) return null; return u.href; } catch { return null; }
+}
+function prettyUrl(href) { try { const u = new URL(href); return (u.hostname.replace(/^www\./, "") + u.pathname).replace(/\/$/, "") + (u.search || ""); } catch { return href; } }
+function linkedinUrl(s) { s = String(s || "").trim(); if (!s) return null; if (/^(in|company)\//i.test(s)) s = "www.linkedin.com/" + s; return webUrl(s); }
+function phoneParts(s) {
+  const raw = String(s || ""), m = raw.match(/\(([^)]+)\)\s*$/), label = m ? m[1].trim() : "";
+  const num = (m ? raw.slice(0, m.index) : raw).trim();
+  let dial = num.replace(/[^\d+]/g, ""); if (dial.startsWith("00")) dial = "+" + dial.slice(2); dial = dial.replace(/(?!^)\+/g, "");
+  const digits = dial.replace(/\D/g, "");
+  return { label, num: num || raw, tel: digits.length >= 5 ? "tel:" + dial : null, wa: digits.length >= 8 && dial.startsWith("+") ? "https://wa.me/" + digits : null };
+}
+const emailOk = s => /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(String(s || "").trim());
+const mapsUrl = a => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(a);
+function monogram(s) { const w = String(s || "?").replace(/[^\p{L}\p{N}\s&]/gu, " ").split(/\s+/).filter(x => x && !/^(llc|ltd|inc|pvt|co|fze|fzco|gmbh|the|and|&)$/i.test(x)); return ((w[0] || "?")[0] + (w[1] ? w[1][0] : "")).toUpperCase(); }
+function hueOf(s) { let x = 0; for (const ch of String(s)) x = (x * 31 + ch.codePointAt(0)) >>> 0; return x % 360; }
+function coinBg(name, accent) {
+  if (/^#[0-9a-f]{6}$/i.test(accent || "")) return `linear-gradient(140deg, ${accent}, color-mix(in srgb, ${accent} 55%, #000))`;
+  const hu = hueOf(name); return `linear-gradient(140deg, hsl(${hu} 42% 40%), hsl(${(hu + 28) % 360} 46% 24%))`;
+}
+
+/* =========================================================
+   Storage: Claude account (db + assets), or this device (IndexedDB)
+   ========================================================= */
+const IDB = {
+  db: null,
+  open() { return new Promise((res, rej) => { let r; try { r = indexedDB.open("kardly", 1); } catch (e) { rej(e); return; } r.onupgradeneeded = () => { r.result.createObjectStore("cards", { keyPath: "id" }); r.result.createObjectStore("images"); }; r.onsuccess = () => { this.db = r.result; res(r.result); }; r.onerror = () => rej(r.error); }); },
+  tx(store, mode, fn) { return new Promise((res, rej) => { const t = this.db.transaction(store, mode), s = t.objectStore(store); let out; const req = fn(s); if (req) req.onsuccess = () => { out = req.result; }; t.oncomplete = () => res(out); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error); }); },
+  all(s) { return this.tx(s, "readonly", x => x.getAll()); },
+  get(s, k) { return this.tx(s, "readonly", x => x.get(k)); },
+  put(s, v, k) { return this.tx(s, "readwrite", x => k === undefined ? x.put(v) : x.put(v, k)); },
+  del(s, k) { return this.tx(s, "readwrite", x => x.delete(k)); }
+};
+const urlCache = new Map();
+const Store = {
+  mode: "pending", cards: [], loaded: false, db: null, assets: null, cardCol: null, imgCol: null, memImages: new Map(),
+  async init() {
+    let db = null, user = null, assets = null;
+    if (!N && window.claude && typeof window.claude.use === "function") {
+      [db, user, assets] = await Promise.all(["db", "user", "assets"].map(n => window.claude.use(n).catch(() => null)));
+    }
+    let id = null; if (db && user) { try { id = await user.id(); } catch {} }
+    if (db && id) {
+      try {
+        this.cardCol = db.doc("data/users/" + id + "/wallet").collection("cards");
+        this.imgCol = db.doc("data/users/" + id + "/images").collection("items");
+        this.db = db; this.assets = assets; this.mode = "cloud"; this.subscribe(); render(); return;
+      } catch (e) { console.warn("db path", e); }
+    }
+    try { await IDB.open(); this.cards = (await IDB.all("cards")) || []; this.mode = "local"; } catch { this.mode = "memory"; }
+    this.loaded = true; render();
+  },
+  subscribe() {
+    let ok = false; const t = setTimeout(() => { if (!ok) { this.slow = true; render(); } }, 10000);
+    this.cardCol.onSnapshot(snap => {
+      this.cards = snap.docs.map(d => Object.assign({}, d.data(), { id: d.id })); this.loaded = true;
+      if (!snap.metadata.fromCache && !ok) { ok = true; this.slow = false; clearTimeout(t); }
+      render(); refreshDetail();
+    }, err => { clearTimeout(t); this.loaded = true; this.error = err && err.code || "error"; render(); });
+  },
+  async putImage(blob, key, w, hgt) {
+    if (this.mode === "cloud") {
+      if (this.assets) { try { const r = await this.assets.upload(blob, { type: "image/jpeg" }); return { kind: "asset", id: r.id, w, h: hgt }; } catch (e) { console.warn("asset upload", e); } }
+      const data = await blobToDataUrlUnder(blob, 240000), id = "img_" + key;
+      await this.imgCol.doc(id).set({ data }); urlCache.set("doc:" + id, Promise.resolve(data)); return { kind: "doc", id, w, h: hgt };
+    }
+    const id = "img_" + key;
+    if (this.mode === "local") { await IDB.put("images", blob, id); return { kind: "idb", id, w, h: hgt }; }
+    this.memImages.set(id, URL.createObjectURL(blob)); return { kind: "mem", id, w, h: hgt };
+  },
+  async removeImage(ref) {
+    if (!ref) return;
+    try { if (ref.kind === "asset" && this.assets) await this.assets.delete(ref.id); else if (ref.kind === "doc") await this.imgCol.doc(ref.id).delete(); else if (ref.kind === "idb") await IDB.del("images", ref.id); } catch (e) { console.warn("image cleanup", e); }
+    urlCache.delete(ref.kind + ":" + ref.id);
+  },
+  async save(card) {
+    const clean = JSON.parse(JSON.stringify(card));
+    if (this.mode === "cloud") { await this.cardCol.doc(card.id).set(clean); return; }
+    if (this.mode === "local") await IDB.put("cards", clean);
+    const i = this.cards.findIndex(c => c.id === card.id); if (i >= 0) this.cards[i] = clean; else this.cards.push(clean);
+    render();
+  },
+  async remove(card) {
+    if (this.mode === "cloud") await this.cardCol.doc(card.id).delete();
+    else { if (this.mode === "local") await IDB.del("cards", card.id); this.cards = this.cards.filter(c => c.id !== card.id); render(); }
+    await this.removeImage(card.front); await this.removeImage(card.back);
+  }
+};
+async function blobToDataUrlUnder(blob, maxChars) {
+  const img = await blobToImage(blob);
+  for (const [side, q] of [[1400, .85], [1200, .8], [1000, .75], [800, .7], [640, .65]]) {
+    const s = Math.min(1, side / Math.max(img.width, img.height)), c = mkCanvas(img.width * s, img.height * s);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); const d = c.toDataURL("image/jpeg", q); if (d.length <= maxChars) return d;
+  }
+  throw new Error("Image too large to save");
+}
+function blobToImage(blob) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(blob); }); }
+function imageUrl(ref) {
+  if (!ref || typeof ref !== "object") return Promise.resolve(null);
+  const key = ref.kind + ":" + ref.id; if (urlCache.has(key)) return urlCache.get(key);
+  let p;
+  if (ref.kind === "asset") p = Promise.resolve(/^[A-Za-z0-9_-]{8,64}$/.test(String(ref.id)) ? "/_blob/" + ref.id : null);
+  else if (ref.kind === "doc" && Store.imgCol) p = Store.imgCol.doc(String(ref.id)).get().then(s => { const d = s.exists ? s.data().data : null; return typeof d === "string" && d.startsWith("data:image/") ? d : null; }).catch(() => null);
+  else if (ref.kind === "idb") p = IDB.get("images", ref.id).then(b => b ? URL.createObjectURL(b) : null).catch(() => null);
+  else if (ref.kind === "mem") p = Promise.resolve(Store.memImages.get(ref.id) || null);
+  else if (ref.kind === "example") p = Promise.resolve(EXAMPLE_IMG[ref.id] || null);
+  else p = Promise.resolve(null);
+  urlCache.set(key, p); return p;
+}
+function cardImg(ref, alt) { const img = h("img", { alt: alt || "", decoding: "async", loading: "lazy" }); imageUrl(ref).then(u => { if (u) img.src = u; }); return img; }
+function storageLine() {
+  if (Store.error) return "Saved cards couldn't load. Reopen to try again.";
+  if (Store.slow) return "Can't reach your saved cards yet.";
+  if (N) return "Stored privately on this phone";
+  return { cloud: "Synced privately to your Claude account", local: "Stored in this browser only", memory: "Storage is blocked here. Cards last until you close the page." }[Store.mode] || "";
+}
+
+/* =========================================================
+   Example cards (drawn on the fly, never stored)
+   ========================================================= */
+const EXAMPLE_IMG = {};
+function drawExamples() {
+  const W = 1050, H = 600, font = (w, s, f) => `${w} ${s}px ${f}`;
+  const SERIF = 'Georgia, "Times New Roman", serif', SANS = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+  let c = mkCanvas(W, H), x = c.getContext("2d");
+  x.fillStyle = "#F6F1E6"; x.fillRect(0, 0, W, H); x.fillStyle = "#B88A3B"; x.fillRect(70, 70, 4, 460);
+  x.strokeStyle = "#1E1E1E"; x.lineWidth = 3; x.strokeRect(110, 70, 74, 74); x.fillStyle = "#1E1E1E"; x.font = font(700, 30, SERIF); x.textAlign = "center"; x.fillText("H&R", 147, 118);
+  x.textAlign = "left"; x.font = font(400, 58, SERIF); x.fillText("Priya Raman", 110, 250); x.fillStyle = "#6B6457"; x.font = font(400, 26, SANS); x.fillText("Principal Architect", 112, 292);
+  x.fillStyle = "#1E1E1E"; x.font = font(400, 23, SANS); ["+91 98200 41275", "priya@example.com", "www.example.com", "14 Carmichael Road, Mumbai 400026"].forEach((t, i) => x.fillText(t, 112, 400 + i * 36));
+  x.textAlign = "right"; x.font = font(700, 26, SANS); drawSpaced(x, "HALDEN & RAO", 980, 118, 5); x.font = font(400, 18, SANS); x.fillStyle = "#6B6457"; drawSpaced(x, "ARCHITECTS", 980, 148, 7);
+  EXAMPLE_IMG.ex1 = c.toDataURL("image/jpeg", .88);
+  c = mkCanvas(W, H); x = c.getContext("2d"); x.fillStyle = "#12233F"; x.fillRect(0, 0, W, H); sun(x, 190, 300, 70, "#F5C243");
+  x.fillStyle = "#FFFFFF"; x.font = font(800, 40, SANS); drawSpaced(x, "BRIGHTLINE", 110, 470, 4, "left"); x.fillStyle = "#F5C243"; x.font = font(600, 20, SANS); drawSpaced(x, "SOLAR", 112, 505, 10, "left");
+  x.fillStyle = "#FFFFFF"; x.font = font(700, 48, SANS); x.textAlign = "left"; x.fillText("Omar Haddad", 470, 180); x.fillStyle = "#F5C243"; x.font = font(500, 24, SANS); x.fillText("Head of Partnerships", 472, 220);
+  x.fillStyle = "#D6DEEA"; x.font = font(400, 22, SANS); ["+971 50 318 2290", "omar.haddad@example.org", "www.example.org", "Bay Square 3, Business Bay, Dubai"].forEach((t, i) => x.fillText(t, 472, 330 + i * 38));
+  EXAMPLE_IMG.ex2 = c.toDataURL("image/jpeg", .88);
+  c = mkCanvas(W, H); x = c.getContext("2d"); const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, "#F5C243"); g.addColorStop(1, "#E8A21F"); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  sun(x, W / 2, 250, 90, "#12233F"); x.fillStyle = "#12233F"; x.font = font(800, 44, SANS); drawSpaced(x, "BRIGHTLINE", W / 2, 450, 6, "center"); x.textAlign = "center"; x.font = font(500, 22, SANS); x.fillText("Rooftop solar for warehouses and factories", W / 2, 500);
+  EXAMPLE_IMG.ex2b = c.toDataURL("image/jpeg", .88);
+  c = mkCanvas(W, H); x = c.getContext("2d"); x.fillStyle = "#FFFFFF"; x.fillRect(0, 0, W, H); x.fillStyle = "#D9631E"; x.fillRect(0, 0, 360, H);
+  x.fillStyle = "#FFFFFF"; x.beginPath(); x.ellipse(180, 250, 52, 100, Math.PI / 5, 0, Math.PI * 2); x.fill(); x.strokeStyle = "#D9631E"; x.lineWidth = 5; x.beginPath(); x.moveTo(130, 330); x.lineTo(232, 172); x.stroke();
+  x.fillStyle = "#FFFFFF"; x.textAlign = "center"; x.font = font(400, 34, SERIF); x.fillText("Saffron Leaf", 180, 430); x.font = font(400, 18, SANS); drawSpaced(x, "CATERING", 180, 466, 8, "center");
+  x.textAlign = "left"; x.fillStyle = "#2A1A10"; x.font = font(700, 46, SANS); x.fillText("Lena Fischer", 420, 190); x.fillStyle = "#D9631E"; x.font = font(500, 24, SANS); x.fillText("Events Director", 422, 230);
+  x.fillStyle = "#3E2E24"; x.font = font(400, 22, SANS); ["+49 30 5557 1840", "lena@example.net", "www.example.net", "Oranienstraße 52, 10969 Berlin"].forEach((t, i) => x.fillText(t, 422, 340 + i * 38));
+  EXAMPLE_IMG.ex3 = c.toDataURL("image/jpeg", .88);
+}
+function drawSpaced(x, text, px, py, sp, align = "right") {
+  const ws = [...text].map(ch => x.measureText(ch).width), total = ws.reduce((a, b) => a + b, 0) + sp * (text.length - 1);
+  let cx = align === "right" ? px - total : align === "center" ? px - total / 2 : px; const prev = x.textAlign; x.textAlign = "left";
+  [...text].forEach((ch, i) => { x.fillText(ch, cx, py); cx += ws[i] + sp; }); x.textAlign = prev;
+}
+function sun(x, cx, cy, r, col) {
+  x.fillStyle = col; x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fill(); x.strokeStyle = col; x.lineWidth = 8; x.lineCap = "round";
+  for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6; x.beginPath(); x.moveTo(cx + Math.cos(a) * (r + 18), cy + Math.sin(a) * (r + 18)); x.lineTo(cx + Math.cos(a) * (r + 44), cy + Math.sin(a) * (r + 44)); x.stroke(); }
+}
+const DAY = 86400000;
+const EXAMPLES = [
+  { id: "ex2", example: true, name: "Omar Haddad", title: "Head of Partnerships", company: "Brightline Solar", phones: ["+971 50 318 2290 (Mobile)"], emails: ["omar.haddad@example.org"], website: "www.example.org", address: "Office 1204, Bay Square 3, Business Bay, Dubai, UAE", linkedin: "", links: [], tags: ["Lead"], met: "Dubai Expo", metOn: addDaysISO(-2), followUp: addDaysISO(-1), notes: "Interested in rooftop solar for three warehouses. Send the case study and a site-visit date.", accent: "#12233F", createdAt: Date.now() - 1 * DAY, front: { kind: "example", id: "ex2", w: 1050, h: 600 }, back: { kind: "example", id: "ex2b", w: 1050, h: 600 } },
+  { id: "ex1", example: true, name: "Priya Raman", title: "Principal Architect", company: "Halden & Rao Architects", phones: ["+91 98200 41275 (Mobile)", "+91 22 4970 2210 (Studio)"], emails: ["priya@example.com"], website: "www.example.com", address: "14 Carmichael Road, Mumbai 400026, India", linkedin: "", links: [], tags: ["Client"], met: "Mumbai Design Week", metOn: addDaysISO(-4), followUp: addDaysISO(5), notes: "Wants a quote for office lighting. Prefers WhatsApp.", accent: "#8A6A2E", createdAt: Date.now() - 3 * DAY, front: { kind: "example", id: "ex1", w: 1050, h: 600 }, back: null },
+  { id: "ex3", example: true, name: "Lena Fischer", title: "Events Director", company: "Saffron Leaf Catering", phones: ["+49 30 5557 1840 (Office)"], emails: ["lena@example.net"], website: "www.example.net", address: "Oranienstraße 52, 10969 Berlin, Germany", linkedin: "", links: [], tags: ["Vendor"], met: "Dubai Expo", metOn: addDaysISO(-2), followUp: "", notes: "", accent: "#D9631E", createdAt: Date.now() - 9 * DAY, front: { kind: "example", id: "ex3", w: 1050, h: 600 }, back: null }
+];
+
+/* =========================================================
+   Wallet view
+   ========================================================= */
+const prefs = Object.assign({ view: "stack", sort: "recent" }, lsGet("kardly.prefs", {}));
+const filt = { q: "", company: "", chip: "" };   // chip: "tag:X" | "met:X" | "due"
+function savePrefs() { lsSet("kardly.prefs", { view: prefs.view, sort: prefs.sort, theme: prefs.theme, reader: prefs.reader }); }
+const showingExamples = () => Store.loaded && Store.cards.length === 0;
+function allCards() { return Store.cards.length ? Store.cards : (Store.loaded ? EXAMPLES : []); }
+const norm = s => String(s || "").toLocaleLowerCase();
+const companyOf = c => String(c.company || "").trim();
+const metOf = c => String(c.met || "").trim();
+function haystack(c) { return norm([c.name, c.title, c.company, c.website, c.address, c.notes, c.linkedin, c.met, ...(c.phones || []), ...(c.emails || []), ...(c.tags || []), ...(c.links || [])].join(" ")); }
+function visible() {
+  const terms = norm(filt.q).split(/\s+/).filter(Boolean);
+  const list = allCards().filter(c => {
+    if (filt.company && companyOf(c) !== filt.company) return false;
+    if (filt.chip === "due" && !isDue(c)) return false;
+    if (filt.chip.startsWith("tag:") && !(c.tags || []).includes(filt.chip.slice(4))) return false;
+    if (filt.chip.startsWith("met:") && metOf(c) !== filt.chip.slice(4)) return false;
+    if (!terms.length) return true;
+    const hs = haystack(c), digits = hs.replace(/[\s-]/g, "");
+    return terms.every(t => hs.includes(t) || (/\d/.test(t) && digits.includes(t.replace(/[\s-]/g, ""))));
+  });
+  const byName = (a, b) => (a.name || a.company || "").localeCompare(b.name || b.company || "", undefined, { sensitivity: "base" });
+  const byKey = f => (a, b) => (f(a) || "\uffff").localeCompare(f(b) || "\uffff", undefined, { sensitivity: "base" }) || byName(a, b);
+  if (prefs.sort === "name") list.sort(byName);
+  else if (prefs.sort === "company") list.sort(byKey(companyOf));
+  else if (prefs.sort === "met") list.sort(byKey(metOf));
+  else list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  return list;
+}
+function greeting() { const hr = new Date().getHours(); return hr < 5 ? "Working late" : hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening"; }
+
+function render() {
+  const cards = allCards(), real = Store.cards;
+  $("#greet").textContent = greeting();
+  const comps = new Map(), tags = new Map(), mets = new Map();
+  for (const c of cards) {
+    const k = companyOf(c); if (k) { const e = comps.get(k) || { n: 0, accent: c.accent }; e.n++; comps.set(k, e); }
+    for (const t of c.tags || []) tags.set(t, (tags.get(t) || 0) + 1);
+    const m = metOf(c); if (m) mets.set(m, (mets.get(m) || 0) + 1);
+  }
+  const due = cards.filter(isDue).length;
+  // stats line
+  const st = $("#stats"); st.textContent = "";
+  if (!Store.loaded) st.append(h("span", { text: "Opening your wallet…" }));
+  else {
+    const base = real.length ? real : cards;
+    st.append(h("span", null, h("b", { text: String(base.length) }), base.length === 1 ? " card" : " cards"),
+      (n => h("span", null, h("b", { text: String(n) }), n === 1 ? " company" : " companies"))(new Set(base.map(companyOf).filter(Boolean)).size));
+    if (due) st.append(h("button", { class: "due", type: "button", onclick: () => { filt.chip = filt.chip === "due" ? "" : "due"; render(); } }, h("b", { text: String(due) }), due === 1 ? " follow-up due" : " follow-ups due"));
+    st.append(h("span", { text: storageLine() }));
+  }
+  $("#exampleBanner").hidden = !showingExamples();
+
+  // company rail
+  if (filt.company && !comps.has(filt.company)) filt.company = "";
+  const rail = $("#rail"); rail.textContent = "";
+  rail.append(h("button", { class: "coin", type: "button", "aria-pressed": String(!filt.company), onclick: () => { filt.company = ""; render(); } },
+    h("span", { class: "disc all" }, icon("grid")), h("span", { class: "nm", text: "All" })));
+  [...comps.entries()].sort((a, b) => b[1].n - a[1].n || a[0].localeCompare(b[0])).forEach(([k, e]) => {
+    rail.append(h("button", { class: "coin", type: "button", "aria-pressed": String(filt.company === k), title: k, onclick: () => { filt.company = filt.company === k ? "" : k; haptic("light"); render(); } },
+      h("span", { class: "disc", style: { background: coinBg(k, e.accent) } }, monogram(k), e.n > 1 ? h("span", { class: "ct", text: String(e.n) }) : null),
+      h("span", { class: "nm", text: k })));
+  });
+  const dl = $("#companyList"); dl.textContent = ""; [...comps.keys()].forEach(k => dl.append(h("option", { value: k })));
+  const ml = $("#metList"); ml.textContent = ""; [...mets.keys()].forEach(k => ml.append(h("option", { value: k })));
+
+  // chips: due, events, tags
+  const chipKeys = new Set(["due", ...[...mets.keys()].map(m => "met:" + m), ...[...tags.keys()].map(t => "tag:" + t)]);
+  if (filt.chip && !chipKeys.has(filt.chip)) filt.chip = "";
+  const chips = $("#chips"); chips.textContent = "";
+  const chip = (key, ic, label) => chips.append(h("button", { class: "chip", type: "button", "aria-pressed": String(filt.chip === key), onclick: () => { filt.chip = filt.chip === key ? "" : key; render(); } }, icon(ic), label));
+  if (due) chip("due", "bell", "Follow up");
+  [...mets.keys()].sort().forEach(m => chip("met:" + m, "pin", m));
+  [...tags.keys()].sort().forEach(t => chip("tag:" + t, "tag", t));
+  chips.hidden = !chips.childNodes.length;
+
+  document.querySelectorAll("[data-view]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.view === prefs.view)));
+  $("#sort").value = prefs.sort;
+
+  const main = $("#wallet"); main.textContent = "";
+  if (!Store.loaded) { main.append(h("div", { class: "empty" }, h("div", { class: "spin" }), "Opening your wallet…")); return; }
+  const list = visible();
+  if (!list.length) {
+    main.append(h("div", { class: "empty" }, h("h2", { text: "Nothing here" }),
+      h("p", { text: filt.q ? `No card matches “${filt.q}”.` : "No cards match these filters." }),
+      h("button", { class: "btn", type: "button", onclick: clearFilters }, "Clear search and filters")));
+    return;
+  }
+  const grouped = prefs.sort === "company" || prefs.sort === "met" || prefs.sort === "name";
+  if (prefs.view === "stack" && !grouped) { main.append(stackEl(list)); return; }
+  if (!grouped) { main.append(h("div", { class: "list" }, list.map(rowEl))); return; }
+  const keyOf = prefs.sort === "company" ? c => companyOf(c) || "No company" : prefs.sort === "met" ? c => metOf(c) || "Not recorded" : c => { const f = (c.name || c.company || "#").trim()[0] || "#"; return /\p{L}/u.test(f) ? f.toUpperCase() : "#"; };
+  const groups = new Map(); for (const c of list) { const k = keyOf(c); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(c); }
+  for (const [k, arr] of groups) {
+    main.append(h("div", { class: "group-h" }, h("h2", { text: k }), h("span", { text: `${arr.length} ${arr.length === 1 ? "card" : "cards"}` })));
+    main.append(prefs.view === "stack" ? stackEl(arr) : h("div", { class: "list" }, arr.map(rowEl)));
+  }
+}
+function clearFilters() { filt.q = ""; filt.company = ""; filt.chip = ""; $("#q").value = ""; render(); }
+function titleOf(c) { return c.name || c.company || "Unnamed card"; }
+function stackEl(list) {
+  const wrap = h("div", { class: "stack" });
+  list.forEach(c => {
+    const t = titleOf(c);
+    wrap.append(h("button", { class: "sc", type: "button", "aria-label": `Open ${t}`, onclick: () => openDetail(c.id) },
+      cardImg(c.front, `${t}'s card`),
+      h("span", { class: "tagline" },
+        c.example ? h("span", { class: "pill ex", text: "Example" }) : null,
+        isDue(c) ? h("span", { class: "pill gold", text: "Follow up" }) : null,
+        h("span", { class: "pill", text: c.company && c.name ? `${c.name} · ${c.company}` : t }))));
+  });
+  if (list.length > 1) wrap.append(h("p", { class: "stack-foot", text: "Tap a card to open it" }));
+  return wrap;
+}
+function rowEl(c) {
+  const t = titleOf(c), sub = [c.title, c.name ? c.company : ""].filter(Boolean).join(" · ");
+  const web = webUrl(c.website), ph = (c.phones || []).map(phoneParts).find(p => p.tel);
+  const open = () => openDetail(c.id);
+  const acts = h("div", { class: "li-acts" });
+  if (web) acts.append(h("a", { class: "round", href: web, target: "_blank", rel: "noopener noreferrer", "aria-label": `Website of ${t}` }, icon("globe")));
+  if (ph) acts.append(h("a", { class: "round", href: ph.tel, "aria-label": `Call ${t}` }, icon("phone")));
+  return h("article", { class: "li" },
+    h("button", { class: "thumb", type: "button", "aria-label": `Open ${t}`, onclick: open }, cardImg(c.front, "")),
+    h("div", { class: "li-text", onclick: open },
+      h("h3", { text: t }), sub ? h("p", { text: sub }) : null,
+      metOf(c) ? h("span", { class: "met" }, icon("pin"), metOf(c) + (c.metOn ? " · " + fmtDate(c.metOn) : "")) : null,
+      web ? h("div", null, h("a", { class: "weblink", href: web, target: "_blank", rel: "noopener noreferrer", onclick: e => e.stopPropagation() }, prettyUrl(web), icon("out"))) : null),
+    acts);
+}
+
+/* =========================================================
+   Sheets
+   ========================================================= */
+const SHEETS = ["#scanSheet", "#detailSheet", "#setSheet"];
+function openSheet(el) { el.hidden = false; document.body.classList.add("locked"); el.querySelector(".sheet-panel").scrollTop = 0; }
+function closeSheet(el) { el.hidden = true; if (SHEETS.every(s => $(s).hidden)) document.body.classList.remove("locked"); }
+function closeTop() {
+  if (!$("#scanSheet").hidden) { closeScan(); return true; }
+  if (!$("#setSheet").hidden) { closeSheet($("#setSheet")); return true; }
+  if (!$("#detailSheet").hidden) { closeSheet($("#detailSheet")); return true; }
+  return false;
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeTop(); });
+if (N && N.onBack) N.onBack(() => closeTop());
+
+/* =========================================================
+   Card detection: colour pass, OpenCV pass, sub-pixel edge snap
+   ========================================================= */
+const dist2 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+function polyArea(p) { let s = 0; for (let i = 0; i < p.length; i++) { const a = p[i], b = p[(i + 1) % p.length]; s += a[0] * b[1] - b[0] * a[1]; } return Math.abs(s) / 2; }
+function convexHull(pts) {
+  const p = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]); if (p.length < 3) return p;
+  const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); const lo = [], up = [];
+  for (const q of p) { while (lo.length >= 2 && cross(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+  for (let i = p.length - 1; i >= 0; i--) { const q = p[i]; while (up.length >= 2 && cross(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+  up.pop(); lo.pop(); return lo.concat(up);
+}
+function fitLine(pts) {
+  let mx = 0, my = 0; for (const p of pts) { mx += p[0]; my += p[1]; } mx /= pts.length; my /= pts.length;
+  let sxx = 0, sxy = 0, syy = 0; for (const p of pts) { const dx = p[0] - mx, dy = p[1] - my; sxx += dx * dx; sxy += dx * dy; syy += dy * dy; }
+  const ang = 0.5 * Math.atan2(2 * sxy, sxx - syy); return { px: mx, py: my, dx: Math.cos(ang), dy: Math.sin(ang) };
+}
+function lineThrough(a, b) { const L = dist2(a, b) || 1; return { px: a[0], py: a[1], dx: (b[0] - a[0]) / L, dy: (b[1] - a[1]) / L }; }
+function lineDist(l, p) { return Math.abs(-l.dy * (p[0] - l.px) + l.dx * (p[1] - l.py)); }
+function intersect(l1, l2) { const den = l1.dx * l2.dy - l1.dy * l2.dx; if (Math.abs(den) < 1e-6) return null; const t = ((l2.px - l1.px) * l2.dy - (l2.py - l1.py) * l2.dx) / den; return [l1.px + t * l1.dx, l1.py + t * l1.dy]; }
+function orderQuad(q) {
+  const cx = q.reduce((s, p) => s + p[0], 0) / 4, cy = q.reduce((s, p) => s + p[1], 0) / 4;
+  const s = q.slice().sort((a, b) => Math.atan2(a[1] - cy, a[0] - cx) - Math.atan2(b[1] - cy, b[0] - cx));
+  let k = 0; for (let i = 1; i < 4; i++) if (s[i][0] + s[i][1] < s[k][0] + s[k][1]) k = i; return [0, 1, 2, 3].map(i => s[(k + i) % 4]);
+}
+function isConvexQuad(q) { let sign = 0; for (let i = 0; i < 4; i++) { const a = q[i], b = q[(i + 1) % 4], c = q[(i + 2) % 4]; const cr = (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]); if (Math.abs(cr) < 1e-9) return false; if (!sign) sign = Math.sign(cr); else if (Math.sign(cr) !== sign) return false; } return true; }
+function quadFromPoints(pts, diag) {
+  if (pts.length < 12) return null; const hull = convexHull(pts); if (hull.length < 4) return null;
+  let poly = hull.slice();
+  while (poly.length > 4) { let mi = 0, ma = Infinity; for (let i = 0; i < poly.length; i++) { const a = poly[(i - 1 + poly.length) % poly.length], b = poly[i], c = poly[(i + 1) % poly.length]; const ar = Math.abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])); if (ar < ma) { ma = ar; mi = i; } } poly.splice(mi, 1); }
+  if (polyArea(poly) < 0.86 * polyArea(hull)) return null;
+  const lines = [];
+  for (let i = 0; i < 4; i++) {
+    const A = poly[i], B = poly[(i + 1) % 4], L = dist2(A, B); if (L < diag * 0.06) return null;
+    const ux = (B[0] - A[0]) / L, uy = (B[1] - A[1]) / L, tol = diag * 0.015, sel = [];
+    for (const p of pts) { const vx = p[0] - A[0], vy = p[1] - A[1], t = (vx * ux + vy * uy) / L; if (t < 0.12 || t > 0.88) continue; if (Math.abs(-uy * vx + ux * vy) < tol) sel.push(p); }
+    lines.push(sel.length >= 8 ? fitLine(sel) : lineThrough(A, B));
+  }
+  const out = []; for (let i = 0; i < 4; i++) { const P = intersect(lines[(i + 3) % 4], lines[i]); out.push(P && dist2(P, poly[i]) < diag * 0.08 ? P : poly[i]); }
+  const q = orderQuad(out); return isConvexQuad(q) ? q : null;
+}
+function morph(m, w, hh, dilate, iters) {
+  let a = m;
+  for (let it = 0; it < iters; it++) {
+    const b = new Uint8Array(a.length);
+    for (let y = 0; y < hh; y++) for (let x = 0; x < w; x++) {
+      let v = dilate ? 0 : 1;
+      for (let dy = -1; dy <= 1; dy++) { const yy = y + dy; if (yy < 0 || yy >= hh) continue; for (let dx = -1; dx <= 1; dx++) { const xx = x + dx; if (xx < 0 || xx >= w) continue; const q = a[yy * w + xx]; if (dilate ? q : !q) { v = dilate ? 1 : 0; dy = 2; break; } } }
+      b[y * w + x] = v;
+    }
+    a = b;
+  }
+  return a;
+}
+function otsu(hist, total) { let sum = 0; for (let i = 0; i < 256; i++) sum += i * hist[i]; let sumB = 0, wB = 0, best = 0, thr = 0; for (let i = 0; i < 256; i++) { wB += hist[i]; if (!wB) continue; const wF = total - wB; if (!wF) break; sumB += i * hist[i]; const mB = sumB / wB, mF = (sum - sumB) / wF, v = wB * wF * (mB - mF) * (mB - mF); if (v > best) { best = v; thr = i; } } return thr; }
+function detectJS(src) {
+  const sc = Math.min(1, 360 / Math.max(src.width, src.height)), w = Math.max(16, Math.round(src.width * sc)), hh = Math.max(16, Math.round(src.height * sc));
+  const c = mkCanvas(w, hh), x = c.getContext("2d", { willReadFrequently: true }); x.drawImage(src, 0, 0, w, hh);
+  const d = x.getImageData(0, 0, w, hh).data, N2 = w * hh, ring = Math.max(2, Math.round(Math.min(w, hh) * 0.04)), R = [], G = [], B = [];
+  for (let y = 0; y < hh; y++) for (let xx = 0; xx < w; xx++) if (xx < ring || y < ring || xx >= w - ring || y >= hh - ring) { const i = (y * w + xx) * 4; R.push(d[i]); G.push(d[i + 1]); B.push(d[i + 2]); }
+  const med = a => { a.sort((p, q) => p - q); return a[a.length >> 1]; }, br = med(R), bgc = med(G), bb = med(B);
+  const dist = new Uint8Array(N2), hist = new Uint32Array(256);
+  for (let i = 0; i < N2; i++) { const r = d[i * 4] - br, g = d[i * 4 + 1] - bgc, b = d[i * 4 + 2] - bb; let v = Math.sqrt(r * r + g * g + b * b) * 0.577; v = v > 255 ? 255 : v | 0; dist[i] = v; hist[v]++; }
+  const t = Math.max(16, otsu(hist, N2)); let m = new Uint8Array(N2); for (let i = 0; i < N2; i++) m[i] = dist[i] > t ? 1 : 0;
+  m = morph(morph(m, w, hh, 1, 2), w, hh, 0, 2);
+  const lab = new Int32Array(N2).fill(-1), stack = new Int32Array(N2); let best = -1, bestA = 0, id = 0;
+  for (let i = 0; i < N2; i++) {
+    if (!m[i] || lab[i] >= 0) continue; let sp = 0, a = 0; stack[sp++] = i; lab[i] = id;
+    while (sp) { const p = stack[--sp]; a++; const px = p % w, py = (p / w) | 0;
+      if (px > 0 && m[p - 1] && lab[p - 1] < 0) { lab[p - 1] = id; stack[sp++] = p - 1; } if (px < w - 1 && m[p + 1] && lab[p + 1] < 0) { lab[p + 1] = id; stack[sp++] = p + 1; }
+      if (py > 0 && m[p - w] && lab[p - w] < 0) { lab[p - w] = id; stack[sp++] = p - w; } if (py < hh - 1 && m[p + w] && lab[p + w] < 0) { lab[p + w] = id; stack[sp++] = p + w; } }
+    if (a > bestA) { bestA = a; best = id; } id++;
+  }
+  if (bestA < N2 * 0.06) return null;
+  const pts = [];
+  for (let i = 0; i < N2; i++) { if (lab[i] !== best) continue; const px = i % w, py = (i / w) | 0; if (px === 0 || py === 0 || px === w - 1 || py === hh - 1 || lab[i - 1] !== best || lab[i + 1] !== best || lab[i - w] !== best || lab[i + w] !== best) pts.push([px + 0.5, py + 0.5]); }
+  const q = quadFromPoints(pts, Math.hypot(w, hh)); if (!q || polyArea(q) > N2 * 0.97) return null;
+  return q.map(p => [p[0] / sc, p[1] / sc]);
+}
+const CV_URL = (N && N.cvUrl) || "https://cdn.jsdelivr.net/npm/@techstark/opencv-js@4.10.0-release.1/dist/opencv.js";
+let cvPromise = null, cvLib = null;
+function loadCV() {
+  if (cvPromise) return cvPromise;
+  cvPromise = new Promise(resolve => {
+    let settled = false;
+    // The OpenCV module is "thenable": never resolve a promise with it directly, or the promise adopts it forever.
+    const finish = v => { if (settled) return; settled = true; cvLib = v; resolve(v ? { cv: v } : null); };
+    const timer = setTimeout(() => finish(null), 90000);
+    const check = () => { const c = window.cv; if (c && typeof c.Mat === "function" && typeof c.imread === "function") { clearTimeout(timer); finish(c); return true; } return false; };
+    const s = document.createElement("script"); s.src = CV_URL; s.async = true;
+    s.onerror = () => { clearTimeout(timer); finish(null); };
+    s.onload = () => {
+      if (check()) return; const c = window.cv;
+      if (c && typeof c.then === "function") { try { c.then(m => { if (m && typeof m.Mat === "function") window.cv = m; check(); }); } catch {} }
+      else if (c) { const prev = c.onRuntimeInitialized; c.onRuntimeInitialized = () => { if (prev) try { prev(); } catch {} check(); }; }
+      const iv = setInterval(() => { if (check() || settled) clearInterval(iv); }, 250);
+    };
+    document.head.append(s);
+  });
+  return cvPromise;
+}
+function detectCV(cv, src) {
+  const sc = Math.min(1, 720 / Math.max(src.width, src.height)), w = Math.round(src.width * sc), hh = Math.round(src.height * sc);
+  const c = mkCanvas(w, hh); c.getContext("2d").drawImage(src, 0, 0, w, hh);
+  const mats = []; const M = m => { mats.push(m); return m; };
+  try {
+    const rgba = M(cv.imread(c)), blur = M(new cv.Mat()), edges = M(new cv.Mat()), e1 = M(new cv.Mat());
+    cv.GaussianBlur(rgba, blur, new cv.Size(5, 5), 0, 0, cv.BORDER_DEFAULT);
+    const chans = M(new cv.MatVector()); cv.split(blur, chans); const ch = [0, 1, 2].map(i => M(chans.get(i)));
+    const k = M(cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(5, 5))), frame = w * hh; let best = null;
+    for (const [lo, hi] of [[20, 60], [40, 120], [75, 200]]) {
+      cv.Canny(ch[0], edges, lo, hi); for (let i = 1; i < 3; i++) { cv.Canny(ch[i], e1, lo, hi); cv.bitwise_or(edges, e1, edges); }
+      cv.morphologyEx(edges, edges, cv.MORPH_CLOSE, k);
+      const contours = new cv.MatVector(), hier = new cv.Mat(); cv.findContours(edges, contours, hier, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE);
+      for (let i = 0; i < contours.size(); i++) {
+        const cnt = contours.get(i), hull = new cv.Mat(); cv.convexHull(cnt, hull, false, true); const area = cv.contourArea(hull);
+        if (area > frame * 0.07 && area < frame * 0.97) {
+          const ap = new cv.Mat(); cv.approxPolyDP(hull, ap, 0.025 * cv.arcLength(hull, true), true);
+          const score = area * (ap.rows === 4 ? 1 : 0.5);
+          if (!best || score > best.score) { const dd = cnt.data32S, pts = []; for (let j = 0; j < dd.length; j += 2) pts.push([dd[j] + 0.5, dd[j + 1] + 0.5]); const q = quadFromPoints(pts, Math.hypot(w, hh)); if (q) best = { score, q }; }
+          ap.delete();
+        }
+        hull.delete(); cnt.delete();
+      }
+      contours.delete(); hier.delete();
+    }
+    return best ? best.q.map(p => [p[0] / sc, p[1] / sc]) : null;
+  } catch (e) { console.warn("opencv detect", e); return null; }
+  finally { mats.forEach(m => { try { m.delete(); } catch {} }); }
+}
+function lumaOf(src) {
+  if (src._luma) return src._luma;
+  const sc = Math.min(1, 1400 / Math.max(src.width, src.height)), w = Math.round(src.width * sc), hh = Math.round(src.height * sc);
+  const c = mkCanvas(w, hh), x = c.getContext("2d", { willReadFrequently: true }); x.drawImage(src, 0, 0, w, hh);
+  const d = x.getImageData(0, 0, w, hh).data, L = new Float32Array(w * hh * 3);
+  for (let i = 0, n = w * hh; i < n; i++) { L[i * 3] = d[i * 4]; L[i * 3 + 1] = d[i * 4 + 1]; L[i * 3 + 2] = d[i * 4 + 2]; }
+  src._luma = { L, w, h: hh, sc }; return src._luma;
+}
+const _px = [0, 0, 0], _qx = [0, 0, 0];
+function sampleRGB(lc, x, y, out) {
+  if (x < 0) x = 0; if (y < 0) y = 0; if (x > lc.w - 1.001) x = lc.w - 1.001; if (y > lc.h - 1.001) y = lc.h - 1.001;
+  const x0 = x | 0, y0 = y | 0, fx = x - x0, fy = y - y0, i = (y0 * lc.w + x0) * 3, j = i + lc.w * 3, L = lc.L;
+  for (let c = 0; c < 3; c++) out[c] = (L[i + c] * (1 - fx) + L[i + 3 + c] * fx) * (1 - fy) + (L[j + c] * (1 - fx) + L[j + 3 + c] * fx) * fy;
+  return out;
+}
+function colorGrad(lc, ax, ay, bx, by) { const p = sampleRGB(lc, ax, ay, _px), q = sampleRGB(lc, bx, by, _qx); const r = p[0] - q[0], g = p[1] - q[1], b = p[2] - q[2]; return Math.sqrt(r * r + g * g + b * b) * 0.577; }
+function refineEdges(src, quad, winFrac = 0.012, rel = 0.25) {
+  const lc = lumaOf(src), sc = lc.sc, q = quad.map(p => [p[0] * sc, p[1] * sc]);
+  const diag = Math.hypot(lc.w, lc.h), win = Math.max(3, diag * winFrac);
+  const cx = q.reduce((s, p) => s + p[0], 0) / 4, cy = q.reduce((s, p) => s + p[1], 0) / 4; const lines = [];
+  for (let i = 0; i < 4; i++) {
+    const A = q[i], B = q[(i + 1) % 4], L = dist2(A, B) || 1, ux = (B[0] - A[0]) / L, uy = (B[1] - A[1]) / L;
+    let nx = -uy, ny = ux; if (nx * ((A[0] + B[0]) / 2 - cx) + ny * ((A[1] + B[1]) / 2 - cy) < 0) { nx = -nx; ny = -ny; }
+    const pts = [], K = 36;
+    for (let k = 0; k < K; k++) {
+      const t = 0.1 + 0.8 * k / (K - 1), px = A[0] + (B[0] - A[0]) * t, py = A[1] + (B[1] - A[1]) * t;
+      // The card's physical edge is the OUTERMOST strong edge; stronger ones inside are printed stripes.
+      const prof = []; let bestG = 0;
+      for (let s = -win; s <= win; s += 0.5) { const ix = px + nx * s, iy = py + ny * s; const g = colorGrad(lc, ix + nx * 1.5, iy + ny * 1.5, ix - nx * 1.5, iy - ny * 1.5); prof.push([s, g]); if (g > bestG) bestG = g; }
+      if (bestG <= 14) continue;
+      let pick = null;
+      for (let j = prof.length - 1; j >= 0; j--) { if (prof[j][1] >= Math.max(14, bestG * rel)) { let kk = j; while (kk > 0 && prof[kk - 1][1] >= prof[kk][1]) kk--; pick = prof[kk][0]; break; } }
+      if (pick != null) pts.push([px + nx * pick, py + ny * pick]);
+    }
+    if (pts.length < 10) { lines.push(lineThrough(A, B)); continue; }
+    let ln = fitLine(pts); const res = pts.map(p => lineDist(ln, p)), sorted = res.slice().sort((a, b) => a - b), medr = sorted[sorted.length >> 1];
+    const keep = pts.filter((p, j) => res[j] <= Math.max(1, medr * 2.5)); if (keep.length >= 8) ln = fitLine(keep); lines.push(ln);
+  }
+  const out = []; for (let i = 0; i < 4; i++) { const P = intersect(lines[(i + 3) % 4], lines[i]); out.push(P && dist2(P, q[i]) < win * 3 ? P : q[i]); }
+  const r = orderQuad(out); return isConvexQuad(r) ? r.map(p => [p[0] / sc, p[1] / sc]) : quad;
+}
+
+/* ---------- perspective ---------- */
+function solve8(A, b) {
+  const n = 8, M = A.map((r, i) => r.concat([b[i]]));
+  for (let c = 0; c < n; c++) { let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r; if (Math.abs(M[p][c]) < 1e-12) return null; [M[c], M[p]] = [M[p], M[c]]; for (let r = 0; r < n; r++) { if (r === c) continue; const f = M[r][c] / M[c][c]; for (let k = c; k <= n; k++) M[r][k] -= f * M[c][k]; } }
+  return M.map((r, i) => r[n] / r[i]);
+}
+function homography(srcPts, dstPts) { const A = [], b = []; for (let i = 0; i < 4; i++) { const [u, v] = dstPts[i], [x, y] = srcPts[i]; A.push([u, v, 1, 0, 0, 0, -u * x, -v * x]); b.push(x); A.push([0, 0, 0, u, v, 1, -u * y, -v * y]); b.push(y); } return solve8(A, b); }
+const TRIM = 0.004;
+function dstRect(W, H) { const tx = W * TRIM, ty = H * TRIM; return [[-tx, -ty], [W + tx, -ty], [W + tx, H + ty], [-tx, H + ty]]; }
+function srcPixels(src) { if (!src._rgba) src._rgba = src.getContext("2d", { willReadFrequently: true }).getImageData(0, 0, src.width, src.height); return src._rgba; }
+function warpJS(src, quad, W, H) {
+  const Hm = homography(quad, dstRect(W, H)), out = mkCanvas(W, H); if (!Hm) return out;
+  const [a, b, c, d, e, f, g, hh] = Hm, S = srcPixels(src), sd = S.data, sw = S.width, sh = S.height, ox = out.getContext("2d"), od = ox.createImageData(W, H), o = od.data;
+  for (let v = 0; v < H; v++) { const vv = v + 0.5; for (let u = 0; u < W; u++) {
+    const uu = u + 0.5, den = g * uu + hh * vv + 1; let x = (a * uu + b * vv + c) / den - 0.5, y = (d * uu + e * vv + f) / den - 0.5;
+    if (x < 0) x = 0; if (y < 0) y = 0; if (x > sw - 1.001) x = sw - 1.001; if (y > sh - 1.001) y = sh - 1.001;
+    const x0 = x | 0, y0 = y | 0, fx = x - x0, fy = y - y0, i0 = (y0 * sw + x0) * 4, i1 = i0 + sw * 4, oi = (v * W + u) * 4;
+    for (let ch = 0; ch < 3; ch++) o[oi + ch] = (sd[i0 + ch] * (1 - fx) + sd[i0 + 4 + ch] * fx) * (1 - fy) + (sd[i1 + ch] * (1 - fx) + sd[i1 + 4 + ch] * fx) * fy;
+    o[oi + 3] = 255; } }
+  ox.putImageData(od, 0, 0); return out;
+}
+function warpCV(cv, src, quad, W, H) {
+  const mats = []; const M = m => { mats.push(m); return m; };
+  try {
+    const s = M(cv.imread(src)), dst = M(new cv.Mat()), sp = M(cv.matFromArray(4, 1, cv.CV_32FC2, quad.flat())), dp = M(cv.matFromArray(4, 1, cv.CV_32FC2, dstRect(W, H).flat()));
+    const T = M(cv.getPerspectiveTransform(sp, dp)); cv.warpPerspective(s, dst, T, new cv.Size(W, H), cv.INTER_CUBIC, cv.BORDER_REPLICATE, new cv.Scalar());
+    const out = mkCanvas(W, H); cv.imshow(out, dst); return out;
+  } catch (e) { console.warn("opencv warp", e); return null; } finally { mats.forEach(m => { try { m.delete(); } catch {} }); }
+}
+// True aspect ratio of a rectangle photographed in perspective (Zhang & He), principal point at image centre.
+function trueRatio(quad, imgW, imgH) {
+  const cx = imgW / 2, cy = imgH / 2, P = quad.map(p => [p[0] - cx, p[1] - cy, 1]), m1 = P[0], m2 = P[1], m4 = P[2], m3 = P[3];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]], dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const c14 = cross(m1, m4), k2 = dot(c14, m3) / dot(cross(m2, m4), m3), k3 = dot(c14, m2) / dot(cross(m3, m4), m2);
+  const n2 = m2.map((v, i) => k2 * v - m1[i]), n3 = m3.map((v, i) => k3 * v - m1[i]), den = n2[2] * n3[2];
+  if (Math.abs(den) < 1e-9) return null; const f2 = -(n2[0] * n3[0] + n2[1] * n3[1]) / den; if (!(f2 > 0)) return null;
+  const f = Math.sqrt(f2), diag = Math.hypot(imgW, imgH); if (f < diag * 0.3 || f > diag * 6) return null;
+  const r = Math.sqrt((n2[0] ** 2 + n2[1] ** 2) / f2 + n2[2] ** 2) / Math.sqrt((n3[0] ** 2 + n3[1] ** 2) / f2 + n3[2] ** 2);
+  return isFinite(r) && r > 0 ? r : null;
+}
+const STANDARD = [1.75, 1.6667, 1.5858, 1.5454];
+function outputSize(side, longSide) {
+  const q = side.quad, horiz = (dist2(q[0], q[1]) + dist2(q[3], q[2])) / 2, vert = (dist2(q[0], q[3]) + dist2(q[1], q[2])) / 2;
+  const wh = (side.src && trueRatio(q, side.src.width, side.src.height)) || horiz / Math.max(1, vert);
+  const landscape = wh >= 1, measured = landscape ? wh : 1 / wh; let r;
+  if (side.ratio === "measured") r = measured;
+  else if (side.ratio === "auto") { let bS = null, bE = Infinity; for (const st of STANDARD) { const e = Math.abs(measured - st) / st; if (e < bE) { bE = e; bS = st; } } r = bE < 0.08 ? bS : measured; }
+  else r = parseFloat(side.ratio) || measured;
+  r = Math.min(4, Math.max(1, r));
+  return landscape ? { W: longSide, H: Math.round(longSide / r) } : { W: Math.round(longSide / r), H: longSide };
+}
+
+/* =========================================================
+   Scan flow
+   ========================================================= */
+const scan = { step: "pick", target: "front", editing: null, sides: { front: null, back: null }, touched: new Set(), ai: { state: "idle" }, aiCtrl: null, saving: false };
+const STEP_IDX = { pick: 0, crop: 1, review: 2 };
+const FIELDS = ["name", "title", "company", "website", "phones", "emails", "address", "linkedin", "links", "tags", "notes", "met", "metOn", "followUp"];
+function openScan(card) {
+  if (scan.aiCtrl) { try { scan.aiCtrl.abort(); } catch {} }
+  Object.assign(scan, { step: "pick", target: "front", editing: card || null, sides: { front: null, back: null }, touched: new Set(), ai: { state: "idle" }, aiCtrl: null, saving: false, accent: null });
+  fillForm(card || { metOn: todayISO(), met: lsGet("kardly.lastMet", "") });
+  if (card) {
+    scan.sides.front = card.front ? { stored: card.front, w: card.front.w, h: card.front.h } : null;
+    scan.sides.back = card.back ? { stored: card.back, w: card.back.w, h: card.back.h } : null;
+    FIELDS.forEach(k => scan.touched.add(k)); scan.step = "review";
+  }
+  openSheet($("#scanSheet")); showStep();
+}
+function closeScan() { if (scan.aiCtrl) { try { scan.aiCtrl.abort(); } catch {} scan.aiCtrl = null; } closeSheet($("#scanSheet")); }
+function showStep() {
+  const s = scan.step;
+  $("#stepPick").hidden = s !== "pick"; $("#stepCrop").hidden = s !== "crop"; $("#stepReview").hidden = s !== "review";
+  document.querySelectorAll("#scanSheet .steps i").forEach((el, i) => el.classList.toggle("on", i <= STEP_IDX[s]));
+  const side = scan.target;
+  $("#scanTitle").textContent = s === "pick" ? `Scan the ${side}` : s === "crop" ? `Crop the ${side}` : (scan.editing ? "Edit card" : "Check the details");
+  $("#scanBack").style.visibility = (s === "pick" && !scan.sides.front) || s === "review" ? "hidden" : "visible";
+  $("#skipBack").hidden = !(s === "pick" && scan.target === "back");
+  const head = $("#pickHead"); head.textContent = "";
+  if (scan.target === "back") { head.append("Now the ", h("em", { text: "back" }), ", if it has one"); $("#pickLede").textContent = "Optional. Turn the card over and photograph it the same way."; }
+  else { head.append("Place the card, ", h("em", { text: "we'll do the rest" })); $("#pickLede").textContent = "Kardly finds the edges, straightens the card and crops it to its exact size."; }
+  const foot = $("#scanFoot"); foot.textContent = "";
+  if (s === "pick") {
+    if (scan.sides.front) foot.append(h("button", { class: "btn", type: "button", onclick: () => { scan.step = "review"; showStep(); } }, "Back to details"));
+  } else if (s === "crop") {
+    foot.append(h("button", { class: "btn", type: "button", onclick: () => { scan.step = "pick"; showStep(); } }, "Retake"),
+      h("button", { class: "btn gold", type: "button", id: "useCrop", onclick: useCrop }, icon("crop"), "Use this crop"));
+    requestAnimationFrame(layoutStage);
+  } else {
+    renderSides(); renderAi(); renderQuickChips();
+    foot.append(h("button", { class: "btn ghost", type: "button", onclick: closeScan }, "Cancel"), h("span", { class: "spacer" }),
+      h("button", { class: "btn gold", type: "button", id: "saveCard", onclick: saveScan, disabled: scan.saving }, scan.saving ? "Saving…" : (scan.editing ? "Save changes" : "Save to wallet")));
+  }
+  $("#scanSheet .sheet-panel").scrollTop = 0;
+}
+$("#scanClose").onclick = closeScan;
+$("#scanBack").onclick = () => { if (scan.step === "crop") scan.step = "pick"; else if (scan.step === "pick" && scan.sides.front) scan.step = "review"; showStep(); };
+async function pick(source) {
+  if (N && N.pickPhoto) {
+    try { const blob = await N.pickPhoto(source); if (blob) takeFile(blob); }
+    catch (e) { if (!(e && e.cancelled)) toast(e && e.message ? e.message : "Couldn't open the camera."); }
+    return;
+  }
+  const inp = source === "camera" ? $("#camIn") : $("#galIn"); inp.value = ""; inp.click();
+}
+$("#pickCam").onclick = () => pick("camera");
+$("#pickGal").onclick = () => pick("photos");
+$("#skipBack").onclick = () => { scan.step = "review"; showStep(); };
+$("#camIn").onchange = e => { const f = e.target.files && e.target.files[0]; if (f) takeFile(f); };
+$("#galIn").onchange = e => { const f = e.target.files && e.target.files[0]; if (f) takeFile(f); };
+
+async function fileToCanvas(file) {
+  let bmp; try { bmp = await createImageBitmap(file, { imageOrientation: "from-image" }); } catch { bmp = await blobToImage(file); }
+  const W = bmp.width, H = bmp.height, s = Math.min(1, 2800 / Math.max(W, H)), c = mkCanvas(W * s, H * s);
+  const x = c.getContext("2d", { willReadFrequently: true }); x.imageSmoothingQuality = "high"; x.drawImage(bmp, 0, 0, c.width, c.height); if (bmp.close) bmp.close(); return c;
+}
+function defaultQuad(src, inset = 0.05) { const W = src.width, H = src.height, ix = W * inset, iy = H * inset; return [[ix, iy], [W - ix, iy], [W - ix, H - iy], [ix, H - iy]]; }
+async function takeFile(file) {
+  if (file.type && !file.type.startsWith("image/")) { toast("That file isn't an image. Choose a photo of the card."); return; }
+  if ($("#scanSheet").hidden) openScan();
+  let src; try { src = await fileToCanvas(file); } catch { toast("Couldn't open that image. Try a JPEG or PNG photo."); return; }
+  const side = { src, quad: defaultQuad(src), ratio: "auto", adjusted: false, found: false };
+  scan.sides[scan.target] = side; $("#cropRatio").value = "auto"; scan.step = "crop"; showStep();
+  cropNote("busy", "Finding the card edges…"); await new Promise(r => setTimeout(r, 30));
+  const q = detectJS(src); if (q) { side.quad = refineEdges(src, q); side.found = true; }
+  drawStage(); updatePreview();
+  if (!cvLib) cropNote("busy", side.found ? "Edges found. Refining with the precision edge finder…" : "Loading the precision edge finder…");
+  const box = await loadCV(), cv = box && box.cv;
+  if (scan.sides[scan.target] !== side || scan.step !== "crop") return;
+  if (cv && !side.adjusted) { const q2 = detectCV(cv, src); if (q2) { side.quad = refineEdges(src, q2, 0.004, 0.5); side.found = true; drawStage(); updatePreview(); } }
+  if (side.found) haptic("light");
+  cropNote(side.found ? "ok" : "warn", side.found ? "Card edges found. Drag a corner to fine-tune." : "Couldn't find the edges. Drag the four gold corners onto the card.");
+}
+function cropNote(kind, text) { const n = $("#cropNote"); n.textContent = ""; if (kind === "busy") n.append(h("span", { class: "spin" })); n.append(text); }
+
+/* ---------- crop stage ---------- */
+let stageScale = 1, dragging = -1;
+const currentSide = () => scan.sides[scan.target];
+function layoutStage() {
+  const side = currentSide(); if (!side || !side.src || scan.step !== "crop") return;
+  const wrap = $("#stage").parentElement, availW = Math.max(200, wrap.clientWidth - 20), maxH = Math.max(240, window.innerHeight * 0.5);
+  const s = Math.min(availW / side.src.width, maxH / side.src.height); stageScale = s;
+  const dw = Math.round(side.src.width * s), dh = Math.round(side.src.height * s), dpr = Math.min(2, window.devicePixelRatio || 1);
+  const cv = $("#stageCanvas"); cv.width = Math.round(dw * dpr); cv.height = Math.round(dh * dpr); cv.style.width = dw + "px"; cv.style.height = dh + "px";
+  const x = cv.getContext("2d"); x.imageSmoothingQuality = "high"; x.drawImage(side.src, 0, 0, cv.width, cv.height);
+  $("#stage").style.width = dw + "px"; $("#stage").style.height = dh + "px";
+  const svg = $("#stageSvg"); svg.setAttribute("viewBox", `0 0 ${side.src.width} ${side.src.height}`); svg.setAttribute("width", dw); svg.setAttribute("height", dh);
+  drawStage();
+}
+function drawStage() {
+  const side = currentSide(); if (!side || !side.src) return;
+  const svg = $("#stageSvg"), q = side.quad, W = side.src.width, H = side.src.height, NS = "http://www.w3.org/2000/svg";
+  svg.textContent = "";
+  const mk = (tag, at) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); return e; };
+  svg.append(mk("path", { class: "shade", d: `M0 0H${W}V${H}H0Z M${q.map(p => p.join(" ")).join(" L")} Z` }), mk("polygon", { class: "quad", points: q.map(p => p.join(",")).join(" ") }));
+  const arm = 26 / stageScale, hr = 28 / stageScale;
+  q.forEach((p, i) => {
+    const a = q[(i + 3) % 4], b = q[(i + 1) % 4], la = dist2(p, a) || 1, lb = dist2(p, b) || 1;
+    const A = [p[0] + (a[0] - p[0]) / la * Math.min(arm, la / 3), p[1] + (a[1] - p[1]) / la * Math.min(arm, la / 3)];
+    const B = [p[0] + (b[0] - p[0]) / lb * Math.min(arm, lb / 3), p[1] + (b[1] - p[1]) / lb * Math.min(arm, lb / 3)];
+    svg.append(mk("path", { class: "bracket", d: `M${A[0]} ${A[1]} L${p[0]} ${p[1]} L${B[0]} ${B[1]}` }));
+    const hit = mk("circle", { class: "hit", cx: p[0], cy: p[1], r: hr }); hit.dataset.i = i; svg.append(hit);
+  });
+}
+function toSrc(e) { const r = $("#stageSvg").getBoundingClientRect(), side = currentSide(); return [Math.min(side.src.width, Math.max(0, (e.clientX - r.left) / r.width * side.src.width)), Math.min(side.src.height, Math.max(0, (e.clientY - r.top) / r.height * side.src.height))]; }
+function nearestCorner(p) { const q = currentSide().quad; let k = 0; for (let i = 1; i < 4; i++) if (dist2(q[i], p) < dist2(q[k], p)) k = i; return dist2(q[k], p) * stageScale < 64 ? k : -1; }
+const stageSvg = $("#stageSvg");
+stageSvg.addEventListener("pointerdown", e => {
+  const side = currentSide(); if (!side) return; const p = toSrc(e);
+  const i = e.target.dataset && e.target.dataset.i != null ? +e.target.dataset.i : nearestCorner(p); if (i < 0) return;
+  e.preventDefault(); dragging = i; side.adjusted = true; haptic("light");
+  try { stageSvg.setPointerCapture(e.pointerId); } catch {}
+  drawLoupe(side.quad[i]);
+});
+stageSvg.addEventListener("pointermove", e => { if (dragging < 0) return; const side = currentSide(); side.quad[dragging] = toSrc(e); drawStage(); drawLoupe(side.quad[dragging]); });
+const endDrag = () => { if (dragging < 0) return; dragging = -1; $("#loupe").hidden = true; const side = currentSide(); side.quad = orderQuad(side.quad); drawStage(); updatePreview(); cropNote("ok", "Corner placed. The preview shows the final card."); };
+stageSvg.addEventListener("pointerup", endDrag); stageSvg.addEventListener("pointercancel", endDrag);
+function drawLoupe(p) {
+  const side = currentSide(), lp = $("#loupe"), x = lp.getContext("2d"), S = lp.width, zoom = 3.2, span = S / (zoom * stageScale * 2);
+  lp.hidden = false; const left = p[0] * stageScale < $("#stage").clientWidth / 2; lp.style.left = left ? "auto" : "10px"; lp.style.right = left ? "10px" : "auto";
+  x.fillStyle = "#808080"; x.fillRect(0, 0, S, S); x.save(); x.beginPath(); x.arc(S / 2, S / 2, S / 2, 0, Math.PI * 2); x.clip(); x.imageSmoothingQuality = "high";
+  x.drawImage(side.src, p[0] - span / 2, p[1] - span / 2, span, span, 0, 0, S, S);
+  const k = S / span; x.strokeStyle = "#E9C06E"; x.lineWidth = 3; x.beginPath(); side.quad.forEach((pt, i) => { const X = (pt[0] - p[0]) * k + S / 2, Y = (pt[1] - p[1]) * k + S / 2; i ? x.lineTo(X, Y) : x.moveTo(X, Y); }); x.closePath(); x.stroke();
+  x.strokeStyle = "#ffffff"; x.lineWidth = 2; x.beginPath(); x.moveTo(S / 2 - 16, S / 2); x.lineTo(S / 2 + 16, S / 2); x.moveTo(S / 2, S / 2 - 16); x.lineTo(S / 2, S / 2 + 16); x.stroke(); x.restore();
+}
+let previewRaf = 0;
+function updatePreview() { cancelAnimationFrame(previewRaf); previewRaf = requestAnimationFrame(() => { const side = currentSide(); if (!side || !side.src) return; const { W, H } = outputSize(side, 640), out = warpJS(side.src, side.quad, W, H), pv = $("#cropPreview"); pv.width = W; pv.height = H; pv.getContext("2d").drawImage(out, 0, 0); }); }
+$("#cropAuto").onclick = async () => {
+  const side = currentSide(); if (!side) return; cropNote("busy", "Finding the card edges…"); await new Promise(r => setTimeout(r, 20));
+  let q = cvLib ? detectCV(cvLib, side.src) : null; const fromCV = !!q; if (!q) q = detectJS(side.src);
+  if (q) { side.quad = fromCV ? refineEdges(side.src, q, 0.004, 0.5) : refineEdges(side.src, q); side.found = true; side.adjusted = false; cropNote("ok", "Card edges found. Drag a corner to fine-tune."); }
+  else cropNote("warn", "Couldn't find the edges. Drag the four gold corners onto the card.");
+  drawStage(); updatePreview();
+};
+$("#cropRotate").onclick = () => { const s = currentSide(); if (!s) return; s.quad = [s.quad[3], s.quad[0], s.quad[1], s.quad[2]]; s.adjusted = true; drawStage(); updatePreview(); };
+$("#cropFull").onclick = () => { const s = currentSide(); if (!s) return; s.quad = defaultQuad(s.src, 0); s.adjusted = true; drawStage(); updatePreview(); cropNote("ok", "Using the whole photo. Good for scans that are already cropped."); };
+$("#cropRatio").onchange = e => { const s = currentSide(); if (!s) return; s.ratio = e.target.value; updatePreview(); };
+window.addEventListener("resize", () => { if (scan.step === "crop" && !$("#scanSheet").hidden) layoutStage(); });
+async function useCrop() {
+  const side = currentSide(); if (!side) return; const btn = $("#useCrop"); if (btn) { btn.disabled = true; btn.textContent = "Cropping…"; }
+  await new Promise(r => setTimeout(r, 20));
+  const { W, H } = outputSize(side, 1600); let out = cvLib ? warpCV(cvLib, side.src, side.quad, W, H) : null; if (!out) out = warpJS(side.src, side.quad, W, H);
+  side.blob = await canvasToBlob(out, "image/jpeg", 0.92); if (side.url) URL.revokeObjectURL(side.url);
+  side.url = URL.createObjectURL(side.blob); side.w = W; side.h = H; side.stored = null; side.dirty = true;
+  haptic("medium"); scan.step = "review"; showStep(); runAi();
+}
+
+/* ---------- review ---------- */
+function renderSides() {
+  const box = $("#sides"); box.textContent = "";
+  for (const key of ["front", "back"]) {
+    const s = scan.sides[key];
+    if (s && (s.url || s.stored)) {
+      const img = s.url ? h("img", { src: s.url, alt: `${key} of the card` }) : cardImg(s.stored, `${key} of the card`);
+      box.append(h("figure", { class: "side" }, h("div", { class: "shot" + (scan.ai.state === "reading" && s.blob ? " reading" : "") }, img),
+        h("figcaption", null, h("span", { class: "label", text: key === "front" ? "Front" : "Back" }),
+          h("span", { style: { display: "flex", gap: "6px", flexWrap: "wrap" } },
+            s.src ? h("button", { class: "btn sm", type: "button", onclick: () => { scan.target = key; $("#cropRatio").value = s.ratio || "auto"; scan.step = "crop"; showStep(); cropNote("ok", "Drag a corner to fine-tune."); updatePreview(); } }, icon("crop"), "Re-crop") : null,
+            h("button", { class: "btn sm", type: "button", onclick: () => { scan.target = key; scan.step = "pick"; showStep(); } }, icon("camera"), "Retake"),
+            key === "back" ? h("button", { class: "btn sm danger", type: "button", onclick: () => { scan.sides.back = null; renderSides(); } }, "Remove") : null))));
+    } else if (key === "back") {
+      box.append(h("figure", { class: "side" }, h("button", { class: "add-back", type: "button", onclick: () => { scan.target = "back"; scan.step = "pick"; showStep(); } }, icon("plus"), h("strong", { text: "Add the back side" }), h("span", { text: "Optional" })),
+        h("figcaption", null, h("span", { class: "label", text: "Back" }))));
+    }
+  }
+}
+function renderQuickChips() {
+  const mets = [...new Set(allCards().filter(c => !c.example).map(metOf).filter(Boolean))].slice(0, 6);
+  const last = lsGet("kardly.lastMet", ""); if (last && !mets.includes(last)) mets.unshift(last);
+  const mc = $("#metChips"); mc.textContent = "";
+  mets.slice(0, 6).forEach(m => mc.append(h("button", { class: "chip", type: "button", onclick: () => { $("#f-met").value = m; scan.touched.add("met"); } }, icon("pin"), m)));
+  const fc = $("#fuChips"); fc.textContent = "";
+  [["Tomorrow", 1], ["In 3 days", 3], ["Next week", 7], ["In 2 weeks", 14]].forEach(([l, n]) => fc.append(h("button", { class: "chip", type: "button", onclick: () => { $("#f-followUp").value = addDaysISO(n); scan.touched.add("followUp"); } }, l)));
+}
+function fillForm(c) {
+  const f = $("#cardForm");
+  f.name.value = c.name || ""; f.title.value = c.title || ""; f.company.value = c.company || ""; f.website.value = c.website || "";
+  f.phones.value = (c.phones || []).join("\n"); f.emails.value = (c.emails || []).join("\n"); f.address.value = c.address || "";
+  f.linkedin.value = c.linkedin || ""; f.links.value = (c.links || []).join("\n"); f.tags.value = (c.tags || []).join(", "); f.notes.value = c.notes || "";
+  f.met.value = c.met || ""; f.metOn.value = isoOk(c.metOn) ? c.metOn : ""; f.followUp.value = isoOk(c.followUp) ? c.followUp : "";
+  f.querySelectorAll(".field").forEach(el => el.classList.remove("filled"));
+}
+$("#cardForm").addEventListener("input", e => { if (e.target.name) scan.touched.add(e.target.name); });
+$("#cardForm").addEventListener("submit", e => { e.preventDefault(); saveScan(); });
+const lines = s => String(s || "").split(/\n+/).map(t => t.trim()).filter(Boolean);
+function readForm() {
+  const f = $("#cardForm");
+  return { name: f.name.value.trim(), title: f.title.value.trim(), company: f.company.value.trim(), website: f.website.value.trim(),
+    phones: lines(f.phones.value), emails: lines(f.emails.value), address: f.address.value.trim(), linkedin: f.linkedin.value.trim(),
+    links: lines(f.links.value), tags: [...new Set(f.tags.value.split(",").map(t => t.trim()).filter(Boolean))], notes: f.notes.value.trim(),
+    met: f.met.value.trim(), metOn: isoOk(f.metOn.value) ? f.metOn.value : "", followUp: isoOk(f.followUp.value) ? f.followUp.value : "" };
+}
+
+/* ---------- reading the card ---------- */
+let samplePromise = null;
+function getSample() {
+  if (samplePromise) return samplePromise;
+  samplePromise = (async () => {
+    if (N || !window.claude || typeof window.claude.use !== "function") return null;
+    const s = await window.claude.use("sample").catch(() => null); if (!s) return null;
+    const lim = await s.limits().catch(() => null); return lim && lim.images ? s : null;
+  })();
+  return samplePromise;
+}
+const PROMPT = two => `You are reading a photographed visiting card (business card). ${two ? "Image 1 is the front and image 2 is the back." : "The image is the front of the card."}
+Extract the contact details exactly as printed. Reply with only this JSON object:
+{"name":"","title":"","company":"","phones":[],"emails":[],"website":"","address":"","linkedin":"","links":[],"accent":"#RRGGBB"}
+Rules:
+- phones: one string per number, keep the country code if printed, and put the printed label in parentheses after it, e.g. "+971 50 123 4567 (Mobile)".
+- website: the main website as printed (a bare domain like www.company.com is fine).
+- linkedin: the LinkedIn URL or handle if printed. links: other social or web addresses.
+- address: one line, comma separated. company: the organisation name, not the tagline.
+- If text is not in English, keep it as printed and add an English transliteration in brackets for name and company.
+- accent: the card's main brand colour as a hex value.
+- Use "" or [] for anything that is not on the card. Never guess or invent details.`;
+async function runAi() {
+  const imgs = [scan.sides.front, scan.sides.back].filter(s => s && s.blob).map(s => s.blob);
+  if (!scan.sides.front || !scan.sides.front.blob) { renderAi(); return; }
+  if (scan.aiCtrl) { try { scan.aiCtrl.abort(); } catch {} }
+  const ctrl = new AbortController(); scan.aiCtrl = ctrl;
+  let reader = null;
+  if (N && N.readCard) reader = (images, signal) => N.readCard(images, { signal, prompt: PROMPT(images.length > 1), onStatus: m => { if (scan.aiCtrl === ctrl) { scan.ai.detail = m; renderAi(); } } });
+  else { const s = await getSample(); if (s) reader = (images, signal) => s.json(PROMPT(images.length > 1), { images, signal }); }
+  if (!reader) { scan.ai = { state: "off" }; renderAi(); return; }
+  scan.ai = { state: "reading", sides: imgs.length }; renderAi(); renderSides();
+  try {
+    const out = await reader(imgs, ctrl.signal); if (scan.aiCtrl !== ctrl) return;
+    scan.ai = { state: "done", n: applyAi(out), sides: imgs.length, via: out && out._via }; haptic("success");
+  } catch (e) {
+    if (scan.aiCtrl !== ctrl || (e && (e.code === "cancelled" || e.name === "AbortError"))) return;
+    const code = e && e.code; scan.ai = { state: code === "not_granted" || code === "sampling_disabled" ? "denied" : "error", code, message: e && e.userMessage };
+  }
+  scan.aiCtrl = null; renderAi(); renderSides();
+}
+function applyAi(o) {
+  if (!o || typeof o !== "object") return 0;
+  const str = (v, m = 300) => typeof v === "string" ? v.trim().slice(0, m) : "";
+  const arr = v => Array.isArray(v) ? v.filter(x => typeof x === "string" && x.trim()).map(x => x.trim().slice(0, 300)).slice(0, 10) : [];
+  const vals = { name: str(o.name), title: str(o.title), company: str(o.company), website: str(o.website), phones: arr(o.phones).join("\n"), emails: arr(o.emails).join("\n"), address: str(o.address, 500), linkedin: str(o.linkedin), links: arr(o.links).join("\n") };
+  const f = $("#cardForm"); let n = 0;
+  for (const [k, v] of Object.entries(vals)) { if (!v || scan.touched.has(k)) continue; f[k].value = v; f[k].closest(".field").classList.add("filled"); n++; }
+  scan.accent = /^#[0-9a-f]{6}$/i.test(str(o.accent)) ? str(o.accent) : scan.accent; return n;
+}
+function renderAi() {
+  const bar = $("#aiBar"); bar.textContent = ""; const st = scan.ai.state, hasBlob = !!(scan.sides.front && scan.sides.front.blob);
+  if (st === "idle" && !hasBlob) { bar.hidden = true; return; }
+  bar.hidden = false; const msg = h("div", { class: "ai-msg" }); let action = null;
+  if (st === "reading") msg.append(h("span", { class: "spin" }), scan.ai.detail || (scan.ai.sides > 1 ? "Reading both sides…" : "Reading the card…"));
+  else if (st === "done") {
+    msg.append(icon("spark"), scan.ai.n ? `Filled ${scan.ai.n} field${scan.ai.n === 1 ? "" : "s"}${scan.ai.via ? " " + scan.ai.via : ""}. Check them, then add how you met.` : "Nothing new found on the card. Fill in what's missing.");
+    if (scan.sides.back && scan.sides.back.blob && scan.ai.sides < 2) action = h("button", { class: "btn sm", type: "button", onclick: runAi }, "Read the back too");
+  } else if (st === "off") msg.append(icon("spark"), "Automatic reading isn't available here. Type the details below.");
+  else if (st === "denied") msg.append(icon("spark"), "Card reading is turned off for this page. Type the details below.");
+  else if (st === "error") { msg.append(icon("spark"), scan.ai.message || (scan.ai.code === "rate_limited" ? "Too many cards read in a short time. Wait a minute, then try again." : "Couldn't read the card this time.")); action = h("button", { class: "btn sm", type: "button", onclick: runAi }, "Try again"); }
+  else { msg.append(icon("spark"), "Read the details from the card automatically."); action = h("button", { class: "btn sm", type: "button", onclick: runAi }, "Read card"); }
+  bar.append(msg); if (action) bar.append(action);
+}
+async function saveScan() {
+  if (scan.saving) return;
+  const data = readForm(), front = scan.sides.front;
+  if (!front || !(front.blob || front.stored)) { toast("Add a photo of the front first."); return; }
+  if (!data.name && !data.company) { toast("Add at least a name or a company."); $("#f-name").focus(); return; }
+  scan.saving = true; showSaveState();
+  const old = scan.editing, id = old ? old.id : uid("c");
+  try {
+    const refs = {};
+    for (const key of ["front", "back"]) { const s = scan.sides[key]; refs[key] = !s ? null : (s.blob && s.dirty) ? await Store.putImage(s.blob, id + "_" + key[0] + "_" + Date.now().toString(36), s.w, s.h) : (s.stored || null); }
+    const card = Object.assign({}, data, { id, front: refs.front, back: refs.back, accent: scan.accent || (old && old.accent) || null, createdAt: old ? old.createdAt : Date.now(), updatedAt: Date.now() });
+    await Store.save(card);
+    if (data.met) lsSet("kardly.lastMet", data.met);
+    if (old) { if (old.front && (!refs.front || refs.front.id !== old.front.id)) Store.removeImage(old.front); if (old.back && (!refs.back || refs.back.id !== old.back.id)) Store.removeImage(old.back); }
+    scan.saving = false; closeScan(); haptic("success");
+    toast(old ? "Changes saved" : `${card.name || card.company} is in your wallet`);
+    if (old && !$("#detailSheet").hidden) openDetail(card.id);
+  } catch (e) {
+    console.error(e); scan.saving = false; showSaveState();
+    toast(e && e.code === "quota_exceeded" ? "Your wallet storage is full. Delete some cards, then save again." : "Couldn't save the card. Try again.");
+  }
+}
+function showSaveState() { const b = $("#saveCard"); if (b) { b.disabled = scan.saving; b.textContent = scan.saving ? "Saving…" : (scan.editing ? "Save changes" : "Save to wallet"); } }
+
+/* =========================================================
+   Card detail
+   ========================================================= */
+let detailId = null;
+const findCard = id => allCards().find(c => c.id === id) || null;
+function refreshDetail() { if (detailId && !$("#detailSheet").hidden) { const c = findCard(detailId); if (c) renderDetail(c); else closeSheet($("#detailSheet")); } }
+function openDetail(id) { const c = findCard(id); if (!c) return; detailId = id; haptic("light"); renderDetail(c); openSheet($("#detailSheet")); }
+function act(label, href, ic, primary) { const ext = href.startsWith("https:"); return h("a", { class: "act" + (primary ? " primary" : ""), href, target: ext ? "_blank" : null, rel: ext ? "noopener noreferrer" : null }, h("span", { class: "o" }, icon(ic)), label); }
+function renderDetail(c) {
+  const body = $("#detailBody"), foot = $("#detailFoot"); body.textContent = ""; foot.textContent = "";
+  const t = titleOf(c);
+  $("#detailTitle").textContent = c.example ? "Example card" : (c.company || "Card");
+  $("#detailEdit").hidden = !!c.example; $("#detailEdit").onclick = () => openScan(c);
+  const aura = $("#aura"); aura.textContent = ""; aura.append(cardImg(c.front, ""));
+
+  const ratio = c.front && c.front.w ? c.front.w / c.front.h : 1.75;
+  const glossF = h("span", { class: "gloss" }), glossB = h("span", { class: "gloss" });
+  const flip = h("div", { class: "flip", style: { aspectRatio: String(ratio) }, role: c.back ? "button" : null, tabindex: c.back ? "0" : null, "aria-label": c.back ? "Flip card" : null },
+    h("div", { class: "face" }, cardImg(c.front, `Front of ${t}'s card`), glossF),
+    c.back ? h("div", { class: "face back" }, cardImg(c.back, `Back of ${t}'s card`), glossB) : null);
+  const tilt = h("div", { class: "tilt", style: { maxWidth: ratio < 1 ? "320px" : "520px" } }, flip);
+  let flipped = false;
+  const setT = (rx, ry) => { flip.style.transform = `rotateY(${(flipped ? 180 : 0) + ry}deg) rotateX(${rx}deg)`; };
+  tilt.addEventListener("pointermove", e => {
+    if (e.pointerType === "touch") return;
+    const r = tilt.getBoundingClientRect(), px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+    flip.style.transition = "transform .12s ease-out"; setT((0.5 - py) * 10, (px - 0.5) * 12);
+    [glossF, glossB].forEach(g => { g.style.setProperty("--gx", px * 100 + "%"); g.style.setProperty("--gy", py * 100 + "%"); });
+  });
+  tilt.addEventListener("pointerleave", () => { flip.style.transition = ""; setT(0, 0); });
+  if (c.back) {
+    const toggle = () => { flipped = !flipped; flip.style.transition = ""; setT(0, 0); haptic("light"); };
+    flip.addEventListener("click", toggle); flip.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+  }
+  body.append(tilt);
+  if (c.back) body.append(h("div", { class: "flip-hint" }, icon("swap"), "Tap the card to see the back"));
+
+  const badges = h("div", { class: "badges" });
+  if (c.example) badges.append(h("span", { class: "badge", text: "Example" }));
+  if (isDue(c)) badges.append(h("span", { class: "badge gold" }, icon("bell"), "Follow up " + (c.followUp === todayISO() ? "today" : "overdue")));
+  else if (isoOk(c.followUp)) badges.append(h("span", { class: "badge" }, icon("bell"), "Follow up " + fmtDate(c.followUp)));
+  (c.tags || []).forEach(tg => badges.append(h("span", { class: "badge" }, icon("tag"), tg)));
+  body.append(h("div", { class: "who" }, h("h2", { text: t }), h("p", { text: [c.title, c.name ? c.company : ""].filter(Boolean).join(" · ") || " " }), badges.childNodes.length ? badges : null));
+
+  const web = webUrl(c.website), phones = (c.phones || []).map(phoneParts), tel = phones.find(p => p.tel), wa = phones.find(p => p.wa), mail = (c.emails || []).find(emailOk);
+  const acts = h("div", { class: "acts" });
+  if (web) acts.append(act("Website", web, "globe", true));
+  if (tel) acts.append(act("Call", tel.tel, "phone"));
+  if (wa) acts.append(act("WhatsApp", wa.wa, "chat"));
+  if (mail) acts.append(act("Email", "mailto:" + mail.trim(), "mail"));
+  if (c.address) acts.append(act("Map", mapsUrl(c.address), "pin"));
+  if (acts.childNodes.length) body.append(acts);
+
+  if (c.met || c.metOn || c.notes) {
+    const note = h("div", { class: "note" }, h("span", { class: "label", text: "How you met" }));
+    const where = [c.met, c.metOn ? fmtDate(c.metOn) : ""].filter(Boolean).join(" · ");
+    if (where) note.append(h("div", { style: { fontWeight: "700", marginBottom: c.notes ? "6px" : "0" } }, where));
+    if (c.notes) note.append(h("div", { text: c.notes }));
+    body.append(note);
+  }
+
+  const group = h("div", { class: "group" });
+  const row = (ic, label, valueEl, ...btns) => group.append(h("div", { class: "row" }, h("span", { class: "ic" }, icon(ic)), h("div", { class: "val" }, h("small", { text: label }), valueEl), h("div", { class: "row-acts" }, btns)));
+  const copyBtn = (text, el) => h("button", { class: "round", type: "button", "aria-label": "Copy", title: "Copy", onclick: () => copyText(text, el) }, icon("copy"));
+  if (web) row("globe", "Website", h("a", { href: web, target: "_blank", rel: "noopener noreferrer", text: prettyUrl(web) }), copyBtn(web));
+  else if (c.website) { const s = h("span", { text: c.website }); row("globe", "Website", s, copyBtn(c.website, s)); }
+  phones.forEach(p => { const s = h("span", { class: "mono", text: p.num }); row("phone", p.label || "Phone", s, p.tel ? h("a", { class: "btn sm", href: p.tel }, "Call") : null, p.wa ? h("a", { class: "btn sm", href: p.wa, target: "_blank", rel: "noopener noreferrer" }, "WhatsApp") : null, copyBtn(p.num, s)); });
+  (c.emails || []).forEach(em => { const s = h("span", { class: "mono", text: em }); row("mail", "Email", s, emailOk(em) ? h("a", { class: "btn sm", href: "mailto:" + em.trim() }, "Write") : null, copyBtn(em, s)); });
+  if (c.address) { const s = h("span", { text: c.address }); row("pin", "Address", s, h("a", { class: "btn sm", href: mapsUrl(c.address), target: "_blank", rel: "noopener noreferrer" }, "Map"), copyBtn(c.address, s)); }
+  const li = linkedinUrl(c.linkedin); if (li) row("user", "LinkedIn", h("a", { href: li, target: "_blank", rel: "noopener noreferrer", text: prettyUrl(li) }), copyBtn(li));
+  (c.links || []).forEach(l => { const u = webUrl(l); if (u) row("link", "Link", h("a", { href: u, target: "_blank", rel: "noopener noreferrer", text: prettyUrl(u) }), copyBtn(u)); });
+  if (group.childNodes.length) body.append(group);
+  if (c.createdAt) body.append(h("div", { class: "meta-line", text: "Added to your wallet " + new Date(c.createdAt).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) }));
+
+  if (canSave()) {
+    foot.append(h("button", { class: "btn sm", type: "button", onclick: () => saveFile(slug(t) + ".vcf", vcard([c]), "text/vcard") }, icon("user"), N ? "Share contact" : "Save to contacts"));
+    foot.append(h("button", { class: "btn sm", type: "button", onclick: () => saveCardImage(c) }, icon(N ? "share" : "download"), "Card image"));
+  }
+  if (!c.example) foot.append(h("span", { class: "spacer" }), h("button", { class: "btn sm danger", type: "button", onclick: () => askDelete(c) }, icon("trash"), "Delete"));
+}
+function askDelete(c) {
+  const body = $("#detailBody"); if (body.querySelector(".confirm")) return;
+  const box = h("div", { class: "confirm" }, h("p", { text: `Delete ${titleOf(c)}? The card photos are removed too. This can't be undone.` }),
+    h("button", { class: "btn sm", type: "button", onclick: () => box.remove() }, "Keep"),
+    h("button", { class: "btn sm danger solid", type: "button", onclick: async () => { try { await Store.remove(c); closeSheet($("#detailSheet")); haptic("medium"); toast("Card deleted"); } catch { toast("Couldn't delete the card. Try again."); } } }, "Delete card"));
+  body.prepend(box); $("#detailSheet .sheet-panel").scrollTop = 0;
+}
+
+/* =========================================================
+   Export
+   ========================================================= */
+let downloadsCap = null;
+const canSave = () => !!(N || downloadsCap);
+const slug = s => String(s || "card").normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-").slice(0, 60) || "card";
+const vesc = s => String(s || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
+function vcard(list) {
+  return list.map(c => {
+    const parts = String(c.name || "").trim().split(/\s+/), last = parts.length > 1 ? parts.pop() : "", first = parts.join(" ");
+    const L = ["BEGIN:VCARD", "VERSION:3.0", `N:${vesc(last)};${vesc(first)};;;`, `FN:${vesc(c.name || c.company || "")}`];
+    if (c.company) L.push(`ORG:${vesc(c.company)}`); if (c.title) L.push(`TITLE:${vesc(c.title)}`);
+    (c.phones || []).forEach(p => { const pp = phoneParts(p), t = /mob|cell/i.test(pp.label) ? "CELL" : /fax/i.test(pp.label) ? "FAX" : "WORK"; L.push(`TEL;TYPE=${t},VOICE:${vesc(pp.num)}`); });
+    (c.emails || []).forEach(e => L.push(`EMAIL;TYPE=INTERNET,WORK:${vesc(e)}`));
+    const w = webUrl(c.website); if (w) L.push(`URL:${vesc(w)}`); const li = linkedinUrl(c.linkedin); if (li) L.push(`URL;TYPE=LinkedIn:${vesc(li)}`);
+    if (c.address) L.push(`ADR;TYPE=WORK:;;${vesc(c.address)};;;;`);
+    const note = [c.met ? "Met: " + c.met + (c.metOn ? " (" + c.metOn + ")" : "") : "", c.notes, (c.tags || []).length ? "Tags: " + c.tags.join(", ") : ""].filter(Boolean).join("\n");
+    if (note) L.push(`NOTE:${vesc(note)}`); L.push("END:VCARD"); return L.join("\r\n");
+  }).join("\r\n") + "\r\n";
+}
+function csv(list) {
+  const q = v => { const s = String(v == null ? "" : v); return /^[=+\-@]/.test(s) ? `"'${s.replace(/"/g, '""')}"` : `"${s.replace(/"/g, '""')}"`; };
+  const head = ["Name", "Job title", "Company", "Phones", "Emails", "Website", "Address", "LinkedIn", "Other links", "Where we met", "Met on", "Follow up by", "Remarks", "Tags", "Added"];
+  const rows = list.map(c => [c.name, c.title, c.company, (c.phones || []).join(" | "), (c.emails || []).join(" | "), webUrl(c.website) || c.website, c.address, c.linkedin, (c.links || []).join(" | "), c.met, c.metOn, c.followUp, c.notes, (c.tags || []).join(", "), c.createdAt ? new Date(c.createdAt).toISOString().slice(0, 10) : ""]);
+  return "\ufeff" + [head, ...rows].map(r => r.map(q).join(",")).join("\r\n") + "\r\n";
+}
+async function saveFile(filename, data, mime) {
+  try {
+    if (N && N.saveFile) { await N.saveFile(filename, data, mime); return; }
+    if (!downloadsCap) return; const r = await downloadsCap.save({ filename, data }); if (r && r.status === "saved") toast("Saved " + filename);
+  } catch (e) { if (e && e.code !== "cancelled" && e.code !== "declined" && !e.cancelled) toast("The file wasn't saved."); }
+}
+async function saveCardImage(c) {
+  const u = await imageUrl(c.front); if (!u) return; const img = new Image(); img.src = u;
+  try { await img.decode(); } catch { toast("Couldn't prepare the image."); return; }
+  const cv = mkCanvas(img.naturalWidth, img.naturalHeight); cv.getContext("2d").drawImage(img, 0, 0);
+  saveFile(slug(titleOf(c)) + "-card.jpg", await canvasToBlob(cv, "image/jpeg", 0.95), "image/jpeg");
+}
+
+/* =========================================================
+   Settings
+   ========================================================= */
+function applyTheme() {
+  const t = prefs.theme; if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+  else if (N) document.documentElement.removeAttribute("data-theme");
+  if (N && N.setDark) { const dark = t ? t === "dark" : !matchMedia("(prefers-color-scheme: light)").matches; N.setDark(dark); }
+}
+function openSettings() { renderSettings(); openSheet($("#setSheet")); }
+function renderSettings() {
+  const b = $("#setBody"); b.textContent = "";
+  b.append(h("h3", { class: "h-serif" }, "Make it ", h("em", { text: "yours" })));
+  // reading
+  const rd = h("section", { class: "set-group" }, h("h3", { text: "Card reading" }));
+  if (N) {
+    const mode = prefs.reader || "device";
+    const opt = (val, title, desc) => h("label", { class: "opt" }, h("input", { type: "radio", name: "reader", value: val, checked: mode === val, onchange: () => { prefs.reader = val; savePrefs(); renderSettings(); } }), h("div", null, h("strong", { text: title }), h("span", { text: desc })));
+    rd.append(opt("device", "On this phone", "Free and works offline. Reads English text; check the fields after scanning."),
+      opt("claude", "Claude (most accurate)", "Reads any language and layout. Needs your Anthropic API key; each card costs a fraction of a cent."));
+    if (mode === "claude") {
+      const inp = h("input", { id: "apiKey", type: "password", placeholder: "sk-ant-…", autocomplete: "off", value: "" });
+      N.getKey().then(k => { if (k) inp.placeholder = "Key saved · " + k.slice(0, 10) + "…"; });
+      rd.append(h("div", { class: "field" }, h("label", { for: "apiKey", text: "Anthropic API key" }), inp, h("span", { class: "hint", text: "Stored only on this phone and sent only to Anthropic. Get a key at console.anthropic.com." })),
+        h("div", { style: { display: "flex", gap: "8px", flexWrap: "wrap" } },
+          h("button", { class: "btn sm gold", type: "button", onclick: async () => { const v = inp.value.trim(); if (!/^sk-ant-/.test(v)) { toast("That doesn't look like an Anthropic key."); return; } await N.setKey(v); inp.value = ""; toast("Key saved"); renderSettings(); } }, "Save key"),
+          h("button", { class: "btn sm", type: "button", onclick: async () => { await N.setKey(""); toast("Key removed"); renderSettings(); } }, "Remove key")));
+    }
+  } else rd.append(h("p", { text: "Kardly reads each card with Claude in your account, so names, numbers and websites fill in by themselves. You'll be asked to allow it the first time." }));
+  b.append(rd);
+  // export
+  const ex = h("section", { class: "set-group" }, h("h3", { text: "Export" }));
+  const real = Store.cards;
+  if (!real.length) ex.append(h("p", { text: "Scan a card first. Then you can export your whole wallet." }));
+  else if (!canSave()) ex.append(h("p", { text: "Exporting isn't available in this view." }));
+  else {
+    const stamp = todayISO();
+    ex.append(h("p", { text: `${real.length} cards. Contacts import straight into your phone; the spreadsheet opens in Excel or Google Sheets.` }),
+      h("div", { style: { display: "flex", gap: "8px", flexWrap: "wrap" } },
+        h("button", { class: "btn sm", type: "button", onclick: () => saveFile(`kardly-contacts-${stamp}.vcf`, vcard(real), "text/vcard") }, icon("user"), "All contacts (.vcf)"),
+        h("button", { class: "btn sm", type: "button", onclick: () => saveFile(`kardly-cards-${stamp}.csv`, csv(real), "text/csv") }, icon("grid"), "Spreadsheet (.csv)")));
+  }
+  b.append(ex);
+  // appearance
+  const ap = h("section", { class: "set-group" }, h("h3", { text: "Appearance" }));
+  const seg = h("div", { class: "seg", role: "group", "aria-label": "Theme" });
+  [["", "System"], ["dark", "Dark"], ["light", "Light"]].forEach(([v, l]) => seg.append(h("button", { type: "button", "aria-pressed": String((prefs.theme || "") === v), onclick: () => { prefs.theme = v; savePrefs(); applyTheme(); renderSettings(); } }, l)));
+  ap.append(seg); b.append(ap);
+  b.append(h("section", { class: "set-group" }, h("h3", { text: "About" }), h("p", { text: `Kardly 1.0 · ${storageLine()}.` })));
+}
+$("#openSettings").onclick = openSettings; $("#tabMore").onclick = openSettings; $("#setClose").onclick = () => closeSheet($("#setSheet"));
+$("#tabCards").onclick = () => { closeTop(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+
+/* =========================================================
+   Wiring
+   ========================================================= */
+document.querySelectorAll("[data-scan]").forEach(b => b.addEventListener("click", () => { haptic("light"); openScan(); }));
+$("#q").addEventListener("input", e => { filt.q = e.target.value; render(); });
+document.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => { prefs.view = b.dataset.view; savePrefs(); render(); }));
+$("#sort").onchange = e => { prefs.sort = e.target.value; savePrefs(); render(); };
+$("#detailClose").onclick = () => closeSheet($("#detailSheet"));
+SHEETS.forEach(s => $(s).addEventListener("click", e => { if (e.target === $(s)) closeTop(); }));
+if (N && N.openUrl) document.addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest("a[href]"); if (!a) return;
+  const href = a.getAttribute("href"); if (!href || href.startsWith("#")) return;
+  e.preventDefault(); N.openUrl(href);
+}, true);
+const imageFrom = list => [...(list || [])].find(f => f && (f.type || "").startsWith("image/")) || null;
+document.addEventListener("paste", e => { const f = imageFrom(e.clipboardData && e.clipboardData.files); if (!f) return; if (!$("#scanSheet").hidden && scan.step !== "pick") return; e.preventDefault(); takeFile(f); });
+let dragDepth = 0; const hasFiles = e => [...(e.dataTransfer && e.dataTransfer.types || [])].includes("Files");
+document.addEventListener("dragenter", e => { if (hasFiles(e)) { dragDepth++; $("#dropHint").hidden = false; } });
+document.addEventListener("dragleave", () => { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) $("#dropHint").hidden = true; });
+document.addEventListener("dragover", e => { if (hasFiles(e)) e.preventDefault(); });
+document.addEventListener("drop", e => { dragDepth = 0; $("#dropHint").hidden = true; const f = imageFrom(e.dataTransfer && e.dataTransfer.files); if (!f) return; e.preventDefault(); if (!$("#scanSheet").hidden && scan.step !== "pick") return; takeFile(f); });
+
+applyTheme();
+drawExamples();
+render();
+Store.init().catch(e => { console.error(e); Store.mode = "memory"; Store.loaded = true; render(); });
+if (!N && window.claude && typeof window.claude.use === "function") window.claude.use("downloads").then(d => { downloadsCap = d; refreshDetail(); }).catch(() => {});
+if (N && N.ready) N.ready();
+window.__kardly = { detectJS, detectCV, refineEdges, loadCV, outputSize, scan, Store, render, takeFile };
+})();
+</script>

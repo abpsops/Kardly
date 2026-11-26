@@ -1,0 +1,30 @@
+{
+  "name": "kardly",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kardly visiting card wallet",
+  "type": "module",
+  "scripts": {
+    "build:web": "node build-web.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "1.7.0",
+    "@capacitor/android": "8.6.0",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/app-launcher": "8.0.1",
+    "@capacitor/camera": "8.2.6",
+    "@capacitor/core": "8.6.0",
+    "@capacitor/filesystem": "8.1.5",
+    "@capacitor/haptics": "8.0.2",
+    "@capacitor/preferences": "8.0.1",
+    "@capacitor/share": "8.0.3",
+    "@techstark/opencv-js": "^4.10.0-release.1",
+    "@tesseract.js-data/eng": "1.0.0",
+    "tesseract.js": "7.0.0",
+    "tesseract.js-core": "7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.0",
+    "esbuild": "0.25.12"
+  }
+}
