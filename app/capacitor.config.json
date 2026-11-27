@@ -11,6 +11,10 @@
       "insetsHandling": "css",
       "initialViewportFitValueHint": "cover",
       "style": "DARK"
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_kardly",
+      "iconColor": "#3B82F6"
     }
   }
 }

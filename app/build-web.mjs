@@ -18,6 +18,8 @@ await build({
 // 2. Offline libraries: OpenCV, Tesseract (worker, wasm core, English data), fonts
 const nm = here + "node_modules/";
 cpSync(nm + "@techstark/opencv-js/dist/opencv.js", www + "vendor/opencv.js");
+cpSync(nm + "libphonenumber-js/bundle/libphonenumber-max.js", www + "vendor/libphonenumber-max.js");
+cpSync(nm + "qrcode-generator/dist/qrcode.js", www + "vendor/qrcode.js");
 cpSync(nm + "tesseract.js/dist/tesseract.min.js", www + "vendor/tesseract/tesseract.min.js");
 cpSync(nm + "tesseract.js/dist/worker.min.js", www + "vendor/tesseract/worker.min.js");
 for (const f of readdirSync(nm + "tesseract.js-core")) {

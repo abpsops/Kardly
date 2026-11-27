@@ -1,7 +1,7 @@
 // Turns OCR'd text lines from a visiting card into contact fields.
 // lines: [{ text, h (line height px), y, x, block, conf (0-100) }]
 // options: { region: "AE" } default country for numbers printed without a country code.
-import { findPhoneNumbersInText } from "libphonenumber-js";
+import { findPhoneNumbersInText } from "libphonenumber-js/max";  // full data: knows mobile vs landline ranges
 
 const TITLE_WORDS = /\b(ceo|cfo|coo|cto|cmo|cio|founder|co-?founder|owner|partner|president|vice|vp|svp|evp|director|head|manager|mgr|lead|leader|officer|executive|engineer|consultant|specialist|architect|designer|developer|analyst|advisor|adviser|associate|coordinator|supervisor|administrator|accountant|chairman|chairperson|principal|proprietor|representative|sales|business development|operations|procurement|purchasing|human resources|chief|secretary|agent|broker|doctor|dr\.|lawyer|advocate|attorney|surveyor|technician|assistant|intern|trainee|managing|general manager|gm|md|account|relationship|marketing manager)\b/i;
 const COMPANY_WORDS = /\b(llc|l\.l\.c|ltd|limited|inc|incorporated|corp|corporation|co\.|company|pvt|private|plc|gmbh|ag|s\.?a\.?|srl|bv|fze|fzco|fz-?llc|fzc|dmcc|est\.?|establishment|group|holding|holdings|trading|enterprises?|industries|international|solutions|technologies|technology|systems|services|consulting|consultants|associates|partners|studio|labs?|ventures|capital|logistics|shipping|properties|real estate|realty|contracting|construction|engineering|electricals?|electronics|motors|foods?|catering|hospitality|hotels?|resorts?|clinic|hospital|pharma(ceuticals?)?|media|agency|bank|insurance|exchange|travels?|tours|textiles|garments|jewell?ers|furniture|interiors|architects?|solar|energy|global|digital)\b/i;
@@ -92,7 +92,14 @@ export function parseCard(rawLines, { region = "AE" } = {}) {
       }
     }
     for (const f of found) {
-      const label = phoneLabel(text.slice(0, f.startsAt));
+      let label = phoneLabel(text.slice(0, f.startsAt));
+      const type = f.number && f.number.getType ? f.number.getType() : undefined;
+      const typeLabel = type === "MOBILE" || type === "FIXED_LINE_OR_MOBILE" ? "Mobile" : type === "FIXED_LINE" ? "Office" : /TOLL_FREE|SHARED_COST/.test(type || "") ? "Toll free" : "";
+      if (label !== "Fax") {
+        if (!label) label = typeLabel;
+        else if (type === "FIXED_LINE" && /Mobile|WhatsApp/.test(label)) label = "Office";      // e.g. "M: +971 4 …" is still a landline
+        else if (type === "MOBILE" && /Office|Direct/.test(label)) label = "Mobile";
+      }
       const num = f.number ? f.number.formatInternational() : f.raw.replace(/\s+/g, " ");
       out.phones.push(num + (label ? ` (${label})` : ""));
     }

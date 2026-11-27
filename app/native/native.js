@@ -11,6 +11,7 @@ import { App } from "@capacitor/app";
 import Anthropic from "@anthropic-ai/sdk";
 import { DocumentScanner } from "@capacitor-mlkit/document-scanner";
 import { TextRecognition, Script } from "@capacitor-mlkit/text-recognition";
+import { LocalNotifications } from "@capacitor/local-notifications";
 import { parseCard } from "./parse.js";
 
 const KEY_PREF = "anthropic_api_key";
@@ -64,6 +65,44 @@ async function scanCard({ pages = 2 } = {}) {
   for (const u of uris) { const r = await fetch(Capacitor.convertFileSrc(u)); blobs.push(await r.blob()); }
   return { blobs };
 }
+
+/* ---------- follow-up reminders: local notifications, tap opens the card ---------- */
+let channelReady = null;
+function ensureChannel() {
+  if (!channelReady) channelReady = LocalNotifications.createChannel({
+    id: "followups", name: "Follow-up reminders", description: "Reminders to follow up with people you met", importance: 4, visibility: 1,
+  }).catch(() => {});
+  return channelReady;
+}
+async function notificationsAllowed(ask) {
+  try {
+    const s = await LocalNotifications.checkPermissions();
+    if (s.display === "granted") return true;
+    if (!ask) return false;
+    return (await LocalNotifications.requestPermissions()).display === "granted";
+  } catch { return false; }
+}
+// Replaces every Kardly reminder with this list: [{ id, at (ms), title, body, cardId }]
+async function syncReminders(list, ask) {
+  await ensureChannel();
+  const pending = await LocalNotifications.getPending().catch(() => ({ notifications: [] }));
+  const mine = (pending.notifications || []).filter(n => n.extra && n.extra.kardly);
+  if (mine.length) await LocalNotifications.cancel({ notifications: mine.map(n => ({ id: n.id })) }).catch(() => {});
+  const items = list.filter(x => x.at > Date.now() + 30000).sort((a, b) => a.at - b.at).slice(0, 60);
+  if (!items.length) return { granted: await notificationsAllowed(false), count: 0 };
+  if (!(await notificationsAllowed(ask))) return { granted: false, count: 0 };
+  await LocalNotifications.schedule({ notifications: items.map(x => ({
+    id: x.id, title: x.title, body: x.body, channelId: "followups", smallIcon: "ic_stat_kardly", iconColor: "#3B82F6",
+    schedule: { at: new Date(x.at), allowWhileIdle: true }, extra: { kardly: 1, cardId: x.cardId },
+  })) });
+  return { granted: true, count: items.length };
+}
+let openCardCb = null; const openCardQueue = [];
+LocalNotifications.addListener("localNotificationActionPerformed", a => {
+  const id = a && a.notification && a.notification.extra && a.notification.extra.cardId;
+  if (!id) return;
+  if (openCardCb) openCardCb(id); else openCardQueue.push(id);
+});
 
 /* ---------- files: write to cache, then open the Android share sheet ---------- */
 function blobToBase64(blob) {
@@ -214,6 +253,10 @@ window.KardlyNative = {
   cvUrl: "vendor/opencv.js",
   pickPhoto, scanCard, saveFile, openUrl, haptic, getKey, setKey, setDark, readCard,
   onBack(cb) { backCb = cb; },
+  syncReminders,
+  notificationsAllowed,
+  onOpenCard(cb) { openCardCb = cb; while (openCardQueue.length) cb(openCardQueue.shift()); },
+  libs: { phone: "vendor/libphonenumber-max.js", qr: "vendor/qrcode.js" },
   appInfo() { return App.getInfo(); },
   ready() {}
 };

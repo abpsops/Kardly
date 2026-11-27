@@ -210,6 +210,27 @@ a { color: var(--emerald); }
 .dnav { display: flex; align-items: center; justify-content: center; gap: 16px; }
 .dnav .count { min-width: 84px; text-align: center; font-size: .84rem; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
 .round:disabled { opacity: .35; cursor: default; }
+/* my digital card */
+.mycard { position: relative; aspect-ratio: 1.75; max-width: 100%; border-radius: 20px; padding: 22px 24px; box-sizing: border-box; color: #FFFFFF; overflow: hidden;
+  background: linear-gradient(135deg, #3B8EEA 0%, #0E4C92 52%, #071E45 100%); box-shadow: var(--lift-shadow), inset 0 1px 0 rgba(255, 255, 255, .35);
+  display: flex; flex-direction: column; justify-content: space-between; }
+.mycard::before { content: ""; position: absolute; width: 75%; aspect-ratio: 1; right: -22%; top: -45%; border-radius: 50%; background: radial-gradient(circle, rgba(139, 92, 246, .6), transparent 65%); pointer-events: none; }
+.mycard > * { position: relative; }
+.mc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.mc-name { font-size: clamp(1.2rem, 5.5vw, 1.6rem); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; overflow-wrap: anywhere; }
+.mc-role { font-size: .85rem; font-weight: 600; opacity: .88; margin-top: 4px; overflow-wrap: anywhere; }
+.mc-lines { display: grid; gap: 2px; font-family: var(--f-mono); font-size: clamp(.68rem, 2.9vw, .8rem); opacity: .95; overflow-wrap: anywhere; }
+.qr-tile { justify-self: center; background: #FFFFFF; border-radius: 24px; padding: 16px; width: min(76vw, 300px); box-shadow: var(--lift-shadow); }
+.qr-tile svg { display: block; width: 100%; height: auto; }
+.qr-cap { text-align: center; color: var(--muted); font-size: .88rem; max-width: 36ch; justify-self: center; margin: 0; }
+/* batch scan */
+.bitem { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.bitem .thumb { width: 92px; aspect-ratio: 1.75; border-radius: 8px; overflow: hidden; background: var(--surface-2); border: 0; padding: 0; cursor: pointer; }
+.bitem .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bitem h4 { margin: 0; font-size: .95rem; font-weight: 700; overflow-wrap: anywhere; }
+.bitem p { margin: 1px 0 0; font-size: .8rem; color: var(--muted); display: flex; gap: 6px; align-items: center; overflow-wrap: anywhere; }
+.bitem .acts2 { display: flex; gap: 6px; }
+.bitem.saved { opacity: .55; }
 .empty { text-align: center; padding: 56px 16px 24px; color: var(--muted); display: grid; justify-items: center; gap: 10px; }
 .empty h2 { font-family: var(--f-display); font-weight: 800; letter-spacing: -0.02em; color: var(--ink); margin: 0; font-size: 1.6rem; }
 .empty p { margin: 0; max-width: 40ch; }
@@ -438,13 +459,15 @@ input[type="date"] { color-scheme: inherit; }
   <button class="scan-btn" type="button" data-scan aria-label="Scan a card">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M8 12h8"/></svg>
   </button>
-  <button class="tab" type="button" id="tabMore">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>More
+  <button class="tab" type="button" id="tabMe">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>My card
   </button>
 </nav>
 
 <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
 <input type="file" id="galIn" accept="image/*" hidden>
+<input type="file" id="batchIn" accept="image/*" multiple hidden>
+<input type="file" id="restoreIn" accept=".json,application/json" hidden>
 
 <!-- Scan sheet -->
 <div class="sheet" id="scanSheet" hidden role="dialog" aria-modal="true" aria-labelledby="scanTitle">
@@ -462,6 +485,7 @@ input[type="date"] { color-scheme: inherit; }
       <div class="pick">
         <button class="btn gold" type="button" id="pickCam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l2-2h6l2 2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/></svg>Take a photo</button>
         <button class="btn" type="button" id="pickGal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>Choose from gallery</button>
+        <button class="btn" type="button" id="pickBatch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="14" height="11" rx="2"/><path d="M7 5h12a2 2 0 0 1 2 2v9"/></svg>Scan many cards</button>
       </div>
       <ul class="tips">
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Use a surface that contrasts with the card, like a dark table.</li>
@@ -524,6 +548,8 @@ input[type="date"] { color-scheme: inherit; }
       <datalist id="metList"></datalist>
     </div>
 
+    <div class="sheet-body" id="stepBatch" hidden></div>
+
     <div class="sheet-foot" id="scanFoot"></div>
   </div>
 </div>
@@ -539,6 +565,19 @@ input[type="date"] { color-scheme: inherit; }
     </div>
     <div class="sheet-body" id="detailBody"></div>
     <div class="sheet-foot" id="detailFoot"></div>
+  </div>
+</div>
+
+<!-- My card sheet -->
+<div class="sheet" id="meSheet" hidden role="dialog" aria-modal="true" aria-labelledby="meTitle">
+  <div class="sheet-panel">
+    <div class="sheet-head">
+      <button class="icon-btn" type="button" id="meClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <h2 id="meTitle">My card</h2>
+      <span style="width:44px"></span>
+    </div>
+    <div class="sheet-body" id="meBody"></div>
+    <div class="sheet-foot" id="meFoot"></div>
   </div>
 </div>
 
@@ -600,6 +639,8 @@ const ICON = {
   cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   bell: '<path d="M6 9a6 6 0 1 1 12 0c0 6 3 7 3 7H3s3-1 3-7"/><path d="M10 20a2 2 0 0 0 4 0"/>',
   grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  upload: '<path d="M12 21V9m0 0-4 4m4-4 4 4M5 3h14"/>',
+  cloud: '<path d="M7 18a5 5 0 1 1 .9-9.9A6 6 0 0 1 19 10a4 4 0 0 1 0 8z"/><path d="M12 11v6m0 0-2.5-2.5M12 17l2.5-2.5"/>',
   chevL: '<path d="m15 18-6-6 6-6"/>',
   chevR: '<path d="m9 18 6-6-6-6"/>',
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'
@@ -639,12 +680,66 @@ function webUrl(s) {
 }
 function prettyUrl(href) { try { const u = new URL(href); return (u.hostname.replace(/^www\./, "") + u.pathname).replace(/\/$/, "") + (u.search || ""); } catch { return href; } }
 function linkedinUrl(s) { s = String(s || "").trim(); if (!s) return null; if (/^(in|company)\//i.test(s)) s = "www.linkedin.com/" + s; return webUrl(s); }
+/* Libraries loaded on demand: from the app itself on Android, from a CDN on the web. */
+const LIB = {
+  phone: (N && N.libs && N.libs.phone) || "https://cdn.jsdelivr.net/npm/libphonenumber-js@1.13.16/bundle/libphonenumber-max.js",
+  qr: (N && N.libs && N.libs.qr) || "https://cdn.jsdelivr.net/npm/qrcode-generator@2.0.4/dist/qrcode.js",
+};
+const libLoads = {};
+function loadLib(name, globalName) {
+  if (window[globalName]) return Promise.resolve(window[globalName]);
+  if (!libLoads[name]) libLoads[name] = new Promise(res => {
+    const s = document.createElement("script"); s.src = LIB[name]; s.async = true;
+    s.onload = () => res(window[globalName] || null); s.onerror = () => { delete libLoads[name]; res(null); };
+    document.head.append(s);
+  });
+  return libLoads[name];
+}
+/* Number type: mobile (WhatsApp), landline, or toll-free. Google's phone-number data first; these rules
+   cover the region if it can't load. UAE: 5x mobile; 2 Abu Dhabi, 3 Al Ain, 4 Dubai, 6 Sharjah/Ajman/UAQ,
+   7 RAK, 9 Fujairah landlines; 800 toll-free, 600 shared. */
+const KIND_RULES = {
+  "971": n => /^5/.test(n) ? "mobile" : /^(800|600)/.test(n) ? "tollfree" : /^[234679]/.test(n) ? "landline" : "unknown",
+  "966": n => /^5/.test(n) ? "mobile" : /^(800|9200)/.test(n) ? "tollfree" : /^1/.test(n) ? "landline" : "unknown",
+  "974": n => /^[3567]/.test(n) ? "mobile" : /^800/.test(n) ? "tollfree" : /^4/.test(n) ? "landline" : "unknown",
+  "968": n => /^[79]/.test(n) ? "mobile" : /^800/.test(n) ? "tollfree" : /^2/.test(n) ? "landline" : "unknown",
+  "965": n => /^[569]/.test(n) ? "mobile" : /^1800/.test(n) ? "tollfree" : /^2/.test(n) ? "landline" : "unknown",
+  "973": n => /^3/.test(n) ? "mobile" : /^80/.test(n) ? "tollfree" : /^1/.test(n) ? "landline" : "unknown",
+  "91": n => /^1800/.test(n) ? "tollfree" : n.length === 10 && /^[6-9]/.test(n) ? "mobile" : "landline",
+  "92": n => /^3/.test(n) ? "mobile" : /^800/.test(n) ? "tollfree" : "landline",
+  "20": n => /^1/.test(n) ? "mobile" : /^800/.test(n) ? "tollfree" : "landline",
+  "44": n => /^7[1-57-9]/.test(n) ? "mobile" : /^80/.test(n) ? "tollfree" : /^[123]/.test(n) ? "landline" : "unknown",
+};
+const kindCache = new Map();
+function phoneKind(dial) {
+  if (!/^\+\d{6,}$/.test(dial)) return "unknown";
+  if (kindCache.has(dial)) return kindCache.get(dial);
+  let kind = "unknown";
+  const lib = window.libphonenumber;
+  if (lib) {
+    try {
+      const t = lib.parsePhoneNumber(dial).getType();
+      kind = t === "MOBILE" || t === "FIXED_LINE_OR_MOBILE" ? "mobile" : t === "FIXED_LINE" ? "landline" : /TOLL_FREE|SHARED_COST|PREMIUM_RATE|UAN/.test(t || "") ? "tollfree" : t ? "other" : "unknown";
+    } catch {}
+  }
+  if (kind === "unknown") {
+    const d = dial.slice(1), cc = Object.keys(KIND_RULES).sort((a, b) => b.length - a.length).find(c => d.startsWith(c));
+    if (cc) kind = KIND_RULES[cc](d.slice(cc.length).replace(/^0/, ""));
+  }
+  if (lib) kindCache.set(dial, kind);
+  return kind;
+}
+const KIND_LABEL = { mobile: "Mobile", landline: "Landline", tollfree: "Toll-free" };
 function phoneParts(s) {
-  const raw = String(s || ""), m = raw.match(/\(([^)]+)\)\s*$/), label = m ? m[1].trim() : "";
+  const raw = String(s || ""), m = raw.match(/\(([^)]+)\)\s*$/);
   const num = (m ? raw.slice(0, m.index) : raw).trim();
   let dial = num.replace(/[^\d+]/g, ""); if (dial.startsWith("00")) dial = "+" + dial.slice(2); dial = dial.replace(/(?!^)\+/g, "");
-  const digits = dial.replace(/\D/g, "");
-  return { label, num: num || raw, tel: digits.length >= 5 ? "tel:" + dial : null, wa: digits.length >= 8 && dial.startsWith("+") ? "https://wa.me/" + digits : null };
+  const digits = dial.replace(/\D/g, ""), kind = phoneKind(dial);
+  let label = m ? m[1].trim() : "";
+  if (!label || (kind === "landline" && /mob|cell|whats/i.test(label)) || (kind === "mobile" && /^(office|tel|telephone|phone|landline|direct)$/i.test(label))) label = KIND_LABEL[kind] || label;
+  // WhatsApp only works on mobile numbers; unknown types (no data for the country) keep the button
+  const waOk = digits.length >= 8 && dial.startsWith("+") && (kind === "mobile" || kind === "unknown");
+  return { label, kind, num: num || raw, tel: digits.length >= 5 ? "tel:" + dial : null, wa: waOk ? "https://wa.me/" + digits : null };
 }
 const emailOk = s => /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(String(s || "").trim());
 const mapsUrl = a => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(a);
@@ -680,17 +775,30 @@ const Store = {
       try {
         this.cardCol = db.doc("data/users/" + id + "/wallet").collection("cards");
         this.imgCol = db.doc("data/users/" + id + "/images").collection("items");
-        this.db = db; this.assets = assets; this.mode = "cloud"; this.subscribe(); render(); return;
+        this.db = db; this.uidv = id; this.assets = assets; this.mode = "cloud"; this.subscribe(); render(); return;
       } catch (e) { console.warn("db path", e); }
     }
     try { await IDB.open(); this.cards = (await IDB.all("cards")) || []; this.mode = "local"; } catch { this.mode = "memory"; }
-    this.loaded = true; render();
+    this.loaded = true; render(); scheduleReminderSync(false);
+  },
+  async getMe() {
+    try {
+      if (this.mode === "cloud") { const s = await this.db.doc("data/users/" + this.uidv + "/profile").get(); return s.exists ? s.data() : null; }
+      if (this.mode === "local") return (await IDB.get("images", "__me")) || null;
+      return this.memMe || null;
+    } catch { return null; }
+  },
+  async saveMe(me) {
+    const clean = JSON.parse(JSON.stringify(me));
+    if (this.mode === "cloud") await this.db.doc("data/users/" + this.uidv + "/profile").set(clean);
+    else if (this.mode === "local") await IDB.put("images", clean, "__me");
+    else this.memMe = clean;
   },
   subscribe() {
     let ok = false; const t = setTimeout(() => { if (!ok) { this.slow = true; render(); } }, 10000);
     this.cardCol.onSnapshot(snap => {
       this.cards = snap.docs.map(d => Object.assign({}, d.data(), { id: d.id })); this.loaded = true;
-      if (!snap.metadata.fromCache && !ok) { ok = true; this.slow = false; clearTimeout(t); }
+      if (!snap.metadata.fromCache && !ok) { ok = true; this.slow = false; clearTimeout(t); scheduleReminderSync(false); }
       render(); refreshDetail();
     }, err => { clearTimeout(t); this.loaded = true; this.error = err && err.code || "error"; render(); });
   },
@@ -714,12 +822,13 @@ const Store = {
     if (this.mode === "cloud") { await this.cardCol.doc(card.id).set(clean); return; }
     if (this.mode === "local") await IDB.put("cards", clean);
     const i = this.cards.findIndex(c => c.id === card.id); if (i >= 0) this.cards[i] = clean; else this.cards.push(clean);
-    render();
+    render(); scheduleReminderSync(false);
   },
   async remove(card) {
     if (this.mode === "cloud") await this.cardCol.doc(card.id).delete();
     else { if (this.mode === "local") await IDB.del("cards", card.id); this.cards = this.cards.filter(c => c.id !== card.id); render(); }
     await this.removeImage(card.front); await this.removeImage(card.back); await this.removeImage(card.thumb);
+    scheduleReminderSync(false);
   }
 };
 async function blobToDataUrlUnder(blob, maxChars) {
@@ -801,7 +910,7 @@ const EXAMPLES = [
    ========================================================= */
 const prefs = Object.assign({ view: "stack", sort: "recent" }, lsGet("kardly.prefs", {}));
 const filt = { q: "", company: "", chip: "" };   // chip: "tag:X" | "met:X" | "due"
-function savePrefs() { lsSet("kardly.prefs", { view: prefs.view, sort: prefs.sort, theme: prefs.theme, reader: prefs.reader }); }
+function savePrefs() { lsSet("kardly.prefs", { view: prefs.view, sort: prefs.sort, theme: prefs.theme, reader: prefs.reader, reminders: prefs.reminders, remindHour: prefs.remindHour }); }
 const showingExamples = () => Store.loaded && Store.cards.length === 0;
 function allCards() { return Store.cards.length ? Store.cards : (Store.loaded ? EXAMPLES : []); }
 const norm = s => String(s || "").toLocaleLowerCase();
@@ -903,7 +1012,7 @@ function carouselEl(list) {
   const track = h("div", { class: "carousel", role: "list", "aria-label": "Cards, swipe sideways" });
   list.forEach(c => {
     const t = titleOf(c), sub = [c.title, c.name ? c.company : ""].filter(Boolean).join(" · ");
-    const web = webUrl(c.website), phones = (c.phones || []).map(phoneParts), ph = phones.find(p => p.tel), wa = phones.find(p => p.wa);
+    const web = webUrl(c.website), phones = (c.phones || []).map(phoneParts), ph = phones.find(p => p.tel && p.kind === "mobile") || phones.find(p => p.tel), wa = phones.find(p => p.wa);
     const acts = h("div", { class: "li-acts" });
     if (web) acts.append(h("a", { class: "round", href: web, target: "_blank", rel: "noopener noreferrer", "aria-label": `Website of ${t}` }, icon("globe")));
     if (ph) acts.append(h("a", { class: "round", href: ph.tel, "aria-label": `Call ${t}` }, icon("phone")));
@@ -962,12 +1071,13 @@ function rowEl(c) {
 /* =========================================================
    Sheets
    ========================================================= */
-const SHEETS = ["#scanSheet", "#detailSheet", "#setSheet"];
+const SHEETS = ["#scanSheet", "#detailSheet", "#setSheet", "#meSheet"];
 function openSheet(el) { el.hidden = false; document.body.classList.add("locked"); el.querySelector(".sheet-panel").scrollTop = 0; }
 function closeSheet(el) { el.hidden = true; if (SHEETS.every(s => $(s).hidden)) document.body.classList.remove("locked"); }
 function closeTop() {
   if (!$("#scanSheet").hidden) { closeScan(); return true; }
   if (!$("#setSheet").hidden) { closeSheet($("#setSheet")); return true; }
+  if (!$("#meSheet").hidden) { closeSheet($("#meSheet")); return true; }
   if (!$("#detailSheet").hidden) { closeSheet($("#detailSheet")); return true; }
   return false;
 }
@@ -1205,11 +1315,12 @@ function outputSize(side, longSide) {
    Scan flow
    ========================================================= */
 const scan = { step: "pick", target: "front", editing: null, sides: { front: null, back: null }, touched: new Set(), ai: { state: "idle" }, aiCtrl: null, saving: false };
-const STEP_IDX = { pick: 0, crop: 1, review: 2 };
+const STEP_IDX = { pick: 0, crop: 1, review: 2, batch: 2 };
 const FIELDS = ["name", "title", "company", "website", "phones", "emails", "address", "linkedin", "links", "tags", "notes", "met", "metOn", "followUp"];
 function openScan(card) {
   if (scan.aiCtrl) { try { scan.aiCtrl.abort(); } catch {} }
-  Object.assign(scan, { step: "pick", target: "front", editing: card || null, sides: { front: null, back: null }, touched: new Set(), ai: { state: "idle" }, aiCtrl: null, saving: false, accent: null });
+  Object.assign(scan, { step: "pick", target: "front", editing: card || null, sides: { front: null, back: null }, touched: new Set(), ai: { state: "idle" }, aiCtrl: null, saving: false, accent: null, batchIndex: null });
+  batch.items = []; batch.run++;
   fillForm(card || { metOn: todayISO(), met: lsGet("kardly.lastMet", "") });
   if (card) {
     scan.sides.front = card.front ? { stored: card.front, w: card.front.w, h: card.front.h } : null;
@@ -1221,11 +1332,12 @@ function openScan(card) {
 function closeScan() { if (scan.aiCtrl) { try { scan.aiCtrl.abort(); } catch {} scan.aiCtrl = null; } closeSheet($("#scanSheet")); }
 function showStep() {
   const s = scan.step;
-  $("#stepPick").hidden = s !== "pick"; $("#stepCrop").hidden = s !== "crop"; $("#stepReview").hidden = s !== "review";
+  $("#stepPick").hidden = s !== "pick"; $("#stepCrop").hidden = s !== "crop"; $("#stepReview").hidden = s !== "review"; $("#stepBatch").hidden = s !== "batch";
   document.querySelectorAll("#scanSheet .steps i").forEach((el, i) => el.classList.toggle("on", i <= STEP_IDX[s]));
   const side = scan.target;
-  $("#scanTitle").textContent = s === "pick" ? `Scan the ${side}` : s === "crop" ? `Crop the ${side}` : (scan.editing ? "Edit card" : "Check the details");
-  $("#scanBack").style.visibility = (s === "pick" && !scan.sides.front) || s === "review" ? "hidden" : "visible";
+  $("#scanTitle").textContent = s === "pick" ? `Scan the ${side}` : s === "crop" ? `Crop the ${side}` : s === "batch" ? "Batch scan" : (scan.editing ? "Edit card" : scan.batchIndex != null ? `Card ${scan.batchIndex + 1} of ${batch.items.length}` : "Check the details");
+  $("#scanBack").style.visibility = (s === "pick" && !scan.sides.front) || (s === "review" && scan.batchIndex == null) || s === "batch" ? "hidden" : "visible";
+  $("#pickBatch").hidden = scan.target === "back" || !!scan.editing;
   $("#skipBack").hidden = !(s === "pick" && scan.target === "back");
   const head = $("#pickHead"); head.textContent = "";
   if (scan.target === "back") { head.append("Now the ", h("em", { text: "back" }), ", if it has one"); $("#pickLede").textContent = "Optional. Turn the card over and photograph it the same way."; }
@@ -1239,15 +1351,17 @@ function showStep() {
     foot.append(h("button", { class: "btn", type: "button", onclick: () => { scan.step = "pick"; showStep(); } }, "Retake"),
       h("button", { class: "btn gold", type: "button", id: "useCrop", onclick: useCrop }, icon("crop"), "Use this crop"));
     requestAnimationFrame(layoutStage);
+  } else if (s === "batch") {
+    renderBatch();
   } else {
     renderSides(); renderAi(); renderQuickChips();
-    foot.append(h("button", { class: "btn ghost", type: "button", onclick: closeScan }, "Cancel"), h("span", { class: "spacer" }),
+    foot.append(h("button", { class: "btn ghost", type: "button", onclick: () => { if (scan.batchIndex != null) { scan.batchIndex = null; scan.step = "batch"; showStep(); } else closeScan(); } }, scan.batchIndex != null ? "Back to batch" : "Cancel"), h("span", { class: "spacer" }),
       h("button", { class: "btn gold", type: "button", id: "saveCard", onclick: saveScan, disabled: scan.saving }, scan.saving ? "Saving…" : (scan.editing ? "Save changes" : "Save to wallet")));
   }
   $("#scanSheet .sheet-panel").scrollTop = 0;
 }
 $("#scanClose").onclick = closeScan;
-$("#scanBack").onclick = () => { if (scan.step === "crop") scan.step = "pick"; else if (scan.step === "pick" && scan.sides.front) scan.step = "review"; showStep(); };
+$("#scanBack").onclick = () => { if (scan.step === "crop") scan.step = "pick"; else if (scan.step === "pick" && scan.sides.front) scan.step = "review"; else if (scan.step === "review" && scan.batchIndex != null) { scan.batchIndex = null; scan.step = "batch"; } showStep(); };
 async function pick(source) {
   if (N && N.scanCard && source === "camera") {
     const pages = scan.target === "front" && !scan.editing ? 2 : 1;
@@ -1265,6 +1379,15 @@ async function pick(source) {
 }
 $("#pickCam").onclick = () => pick("camera");
 $("#pickGal").onclick = () => pick("photos");
+$("#pickBatch").onclick = async () => {
+  if (N && N.scanCard) {
+    let r; try { r = await N.scanCard({ pages: 20 }); } catch { r = { unavailable: true }; }
+    if (r && r.blobs) { startBatch(r.blobs, true); return; }
+    if (r && r.cancelled) return;
+  }
+  const inp = $("#batchIn"); inp.value = ""; inp.click();
+};
+$("#batchIn").onchange = e => { const fs = [...(e.target.files || [])].filter(f => !f.type || f.type.startsWith("image/")); if (fs.length) startBatch(fs.slice(0, 30), false); };
 $("#skipBack").onclick = () => { scan.step = "review"; showStep(); };
 $("#camIn").onchange = e => { const f = e.target.files && e.target.files[0]; if (f) takeFile(f); };
 $("#galIn").onchange = e => { const f = e.target.files && e.target.files[0]; if (f) takeFile(f); };
@@ -1447,6 +1570,18 @@ Rules:
 - If text is not in English, keep it as printed and add an English transliteration in brackets for name and company.
 - accent: the card's main brand colour as a hex value.
 - Use "" or [] for anything that is not on the card. Never guess or invent details.`;
+// Reads one card's images and returns its fields (on Android: Google ML Kit or Claude; on the web: Claude).
+async function readFields(blobs, signal, onStatus) {
+  if (N && N.readCard) return N.readCard(blobs, { signal, prompt: PROMPT(blobs.length > 1), onStatus });
+  const s = await getSample(); if (!s) throw { code: "off" };
+  return s.json(PROMPT(blobs.length > 1), { images: blobs, signal });
+}
+function normFields(o) {
+  const str = (v, m = 300) => typeof v === "string" ? v.trim().slice(0, m) : "";
+  const arr = v => Array.isArray(v) ? v.filter(x => typeof x === "string" && x.trim()).map(x => x.trim().slice(0, 300)).slice(0, 10) : [];
+  o = o && typeof o === "object" ? o : {};
+  return { name: str(o.name), title: str(o.title), company: str(o.company), website: str(o.website), phones: arr(o.phones), emails: arr(o.emails), address: str(o.address, 500), linkedin: str(o.linkedin), links: arr(o.links), accent: /^#[0-9a-f]{6}$/i.test(str(o.accent)) ? str(o.accent) : null, via: str(o._via) };
+}
 async function runAi() {
   const imgs = [scan.sides.front, scan.sides.back].filter(s => s && s.blob).map(s => s.blob);
   if (!scan.sides.front || !scan.sides.front.blob) { renderAi(); return; }
@@ -1505,7 +1640,13 @@ async function saveScan() {
     await Store.save(card);
     if (data.met) lsSet("kardly.lastMet", data.met);
     if (old) { if (old.front && (!refs.front || refs.front.id !== old.front.id)) Store.removeImage(old.front); if (old.back && (!refs.back || refs.back.id !== old.back.id)) Store.removeImage(old.back); if (old.thumb && (!refs.thumb || refs.thumb.id !== old.thumb.id)) Store.removeImage(old.thumb); }
-    scan.saving = false; closeScan(); haptic("success");
+    if (data.followUp) scheduleReminderSync(true);
+    scan.saving = false; haptic("success");
+    if (scan.batchIndex != null) {   // a card from a batch: back to the batch list
+      const it = batch.items[scan.batchIndex]; if (it) it.status = "saved";
+      scan.batchIndex = null; scan.step = "batch"; showStep(); toast(`${titleOf(card)} saved`); return;
+    }
+    closeScan();
     toast(old ? "Changes saved" : `${card.name || card.company} is in your wallet`);
     if (old && !$("#detailSheet").hidden) openDetail(card.id);
   } catch (e) {
@@ -1608,7 +1749,7 @@ function renderDetail(c) {
   (c.tags || []).forEach(tg => badges.append(h("span", { class: "badge" }, icon("tag"), tg)));
   body.append(h("div", { class: "who" }, h("h2", { text: t }), h("p", { text: [c.title, c.name ? c.company : ""].filter(Boolean).join(" · ") || " " }), badges.childNodes.length ? badges : null));
 
-  const web = webUrl(c.website), phones = (c.phones || []).map(phoneParts), tel = phones.find(p => p.tel), wa = phones.find(p => p.wa), mail = (c.emails || []).find(emailOk);
+  const web = webUrl(c.website), phones = (c.phones || []).map(phoneParts), tel = phones.find(p => p.tel && p.kind === "mobile") || phones.find(p => p.tel), wa = phones.find(p => p.wa && p.kind === "mobile") || phones.find(p => p.wa), mail = (c.emails || []).find(emailOk);
   const acts = h("div", { class: "acts" });
   if (web) acts.append(act("Website", web, "globe", true));
   if (tel) acts.append(act("Call", tel.tel, "phone"));
@@ -1664,7 +1805,7 @@ function vcard(list) {
     const parts = String(c.name || "").trim().split(/\s+/), last = parts.length > 1 ? parts.pop() : "", first = parts.join(" ");
     const L = ["BEGIN:VCARD", "VERSION:3.0", `N:${vesc(last)};${vesc(first)};;;`, `FN:${vesc(c.name || c.company || "")}`];
     if (c.company) L.push(`ORG:${vesc(c.company)}`); if (c.title) L.push(`TITLE:${vesc(c.title)}`);
-    (c.phones || []).forEach(p => { const pp = phoneParts(p), t = /mob|cell/i.test(pp.label) ? "CELL" : /fax/i.test(pp.label) ? "FAX" : "WORK"; L.push(`TEL;TYPE=${t},VOICE:${vesc(pp.num)}`); });
+    (c.phones || []).forEach(p => { const pp = phoneParts(p), t = /fax/i.test(pp.label) ? "FAX" : (pp.kind === "mobile" || /mob|cell/i.test(pp.label)) ? "CELL" : "WORK"; L.push(`TEL;TYPE=${t},VOICE:${vesc(pp.num)}`); });
     (c.emails || []).forEach(e => L.push(`EMAIL;TYPE=INTERNET,WORK:${vesc(e)}`));
     const w = webUrl(c.website); if (w) L.push(`URL:${vesc(w)}`); const li = linkedinUrl(c.linkedin); if (li) L.push(`URL;TYPE=LinkedIn:${vesc(li)}`);
     if (c.address) L.push(`ADR;TYPE=WORK:;;${vesc(c.address)};;;;`);
@@ -1690,6 +1831,251 @@ async function saveCardImage(c) {
   const cv = mkCanvas(img.naturalWidth, img.naturalHeight); cv.getContext("2d").drawImage(img, 0, 0);
   saveFile(slug(titleOf(c)) + "-card.jpg", await canvasToBlob(cv, "image/jpeg", 0.95), "image/jpeg");
 }
+
+
+/* =========================================================
+   Batch scan: many cards in one go, read in the background
+   ========================================================= */
+const batch = { items: [], met: "", metOn: "", tags: "", run: 0 };
+async function sideFromCropped(blob) {
+  const src = await fileToCanvas(blob, 1600), out = await canvasToBlob(src, "image/jpeg", 0.92);
+  return { src, quad: defaultQuad(src, 0), ratio: "measured", blob: out, url: URL.createObjectURL(out), w: src.width, h: src.height, dirty: true };
+}
+async function autoCrop(file) {   // web: find the card in a photo and straighten it, no manual step
+  const src = await fileToCanvas(file);
+  let q = cvLib ? detectCV(cvLib, src) : null; const fromCV = !!q;
+  if (!q) q = detectJS(src);
+  q = q ? (fromCV ? refineEdges(src, q, 0.004, 0.5) : refineEdges(src, q)) : defaultQuad(src, 0);
+  const side = { src, quad: q, ratio: "auto" }, { W, H } = outputSize(side, 1600);
+  const outC = (cvLib && warpCV(cvLib, src, q, W, H)) || warpJS(src, q, W, H), out = await canvasToBlob(outC, "image/jpeg", 0.92);
+  return { src: outC, quad: defaultQuad(outC, 0), ratio: "measured", blob: out, url: URL.createObjectURL(out), w: W, h: H, dirty: true };
+}
+async function startBatch(files, cropped) {
+  if ($("#scanSheet").hidden) openScan();
+  const run = ++batch.run;
+  batch.items = files.map(() => ({ status: "preparing", fields: null }));
+  batch.met = lsGet("kardly.lastMet", ""); batch.metOn = todayISO(); batch.tags = "";
+  scan.step = "batch"; scan.batchIndex = null; showStep(); haptic("medium");
+  if (!cropped) await Promise.race([loadCV(), new Promise(r => setTimeout(r, 8000))]);
+  for (let i = 0; i < files.length; i++) {
+    if (run !== batch.run) return;
+    const it = batch.items[i];
+    try { Object.assign(it, cropped ? await sideFromCropped(files[i]) : await autoCrop(files[i])); it.status = "reading"; }
+    catch { it.status = "error"; }
+    renderBatch();
+  }
+  for (const it of batch.items) {
+    if (run !== batch.run) return;
+    if (it.status !== "reading") continue;
+    try { it.fields = normFields(await readFields([it.blob])); }
+    catch (e) { it.fields = normFields({}); it.readError = true; }
+    if (it.status === "reading") it.status = "ready";
+    renderBatch();
+  }
+}
+function renderBatch() {
+  if (scan.step !== "batch") return;
+  const box = $("#stepBatch"), foot = $("#scanFoot");
+  const items = batch.items, ready = items.filter(i => i.status === "ready"), busy = items.filter(i => i.status === "preparing" || i.status === "reading").length;
+  const saved = items.filter(i => i.status === "saved").length;
+  if (!box.firstChild || !box.querySelector("#b-met")) {
+    box.textContent = "";
+    const met = h("input", { id: "b-met", list: "metList", placeholder: "Dubai Expo, client office…", value: batch.met, oninput: e => { batch.met = e.target.value; } });
+    const metOn = h("input", { id: "b-metOn", type: "date", value: batch.metOn, oninput: e => { batch.metOn = e.target.value; } });
+    const tags = h("input", { id: "b-tags", placeholder: "Lead, Client", value: batch.tags, oninput: e => { batch.tags = e.target.value; } });
+    box.append(h("h3", { class: "h-serif", id: "b-head" }),
+      h("p", { class: "lede", text: "Each card is cropped and read in the background. Tap a card to check or fix its details, or save them all at once." }),
+      h("fieldset", { class: "fs" }, h("legend", { text: "All these cards" }),
+        h("div", { class: "field wide" }, h("label", { for: "b-met", text: "Where we met" }), met),
+        h("div", { class: "field" }, h("label", { for: "b-metOn", text: "Met on" }), metOn),
+        h("div", { class: "field" }, h("label", { for: "b-tags", text: "Tags" }), tags)),
+      h("div", { id: "b-list" }));
+  }
+  $("#b-head").textContent = `${items.length} card${items.length === 1 ? "" : "s"} scanned`;
+  const list = $("#b-list"); list.textContent = "";
+  items.forEach((it, i) => {
+    const f = it.fields || {}, t = f.name || f.company || (it.status === "ready" ? "Unnamed card" : "");
+    const sub = it.status === "preparing" ? [h("span", { class: "spin" }), "Cropping…"]
+      : it.status === "reading" ? [h("span", { class: "spin" }), "Reading…"]
+      : it.status === "error" ? ["Couldn't open this photo"]
+      : it.status === "saved" ? [icon("spark"), "Saved to your wallet"]
+      : [[f.title, f.name ? f.company : ""].filter(Boolean).join(" · ") || (it.readError ? "Couldn't read it. Tap to fill in." : "Tap to check")];
+    const open = () => { if (it.status === "ready") editBatchItem(i); };
+    list.append(h("div", { class: "bitem" + (it.status === "saved" ? " saved" : "") },
+      h("button", { class: "thumb", type: "button", "aria-label": `Check card ${i + 1}`, onclick: open }, it.url ? h("img", { src: it.url, alt: "" }) : null),
+      h("div", { onclick: open, style: { cursor: it.status === "ready" ? "pointer" : "default", minWidth: "0" } }, h("h4", { text: t || `Card ${i + 1}` }), h("p", null, ...sub)),
+      h("div", { class: "acts2" }, it.status === "saved" ? null : h("button", { class: "round", type: "button", "aria-label": `Remove card ${i + 1}`, onclick: () => { batch.items.splice(i, 1); if (!batch.items.length) { scan.step = "pick"; showStep(); } else renderBatch(); } }, icon("trash")))));
+  });
+  foot.textContent = "";
+  foot.append(h("button", { class: "btn ghost", type: "button", onclick: closeScan }, saved ? "Done" : "Cancel"), h("span", { class: "spacer" }),
+    h("button", { class: "btn gold", type: "button", disabled: !ready.length, onclick: saveAllBatch },
+      busy ? [h("span", { class: "spin" }), ` Save ${ready.length} ready`] : ready.length ? `Save all ${ready.length}` : "All saved"));
+}
+function batchShared() {
+  return { met: batch.met.trim(), metOn: isoOk(batch.metOn) ? batch.metOn : "", tags: [...new Set(batch.tags.split(",").map(t => t.trim()).filter(Boolean))] };
+}
+function editBatchItem(i) {
+  const it = batch.items[i]; if (!it) return;
+  const f = it.fields || normFields({}), sh = batchShared();
+  scan.sides = { front: it, back: null }; scan.target = "front"; scan.batchIndex = i; scan.editing = null;
+  fillForm(Object.assign({}, f, { met: sh.met, metOn: sh.metOn, tags: sh.tags }));
+  scan.touched = new Set(FIELDS); scan.accent = f.accent || null;
+  scan.ai = { state: "done", n: ["name", "title", "company", "website", "address", "linkedin"].filter(k => f[k]).length + (f.phones.length ? 1 : 0) + (f.emails.length ? 1 : 0), sides: 1, via: f.via };
+  scan.step = "review"; showStep();
+}
+async function saveAllBatch() {
+  const sh = batchShared(), todo = batch.items.filter(i => i.status === "ready");
+  let n = 0;
+  for (const it of todo) {
+    const id = uid("c"), f = it.fields || normFields({});
+    try {
+      const front = await Store.putImage(it.blob, id + "_f_" + Date.now().toString(36), it.w, it.h);
+      const thumb = await Store.putImage(await makeThumb(it.blob), id + "_t_" + Date.now().toString(36), it.w, it.h).catch(() => null);
+      await Store.save({ id, name: f.name, title: f.title, company: f.company, website: f.website, phones: f.phones, emails: f.emails, address: f.address, linkedin: f.linkedin, links: f.links,
+        tags: sh.tags, notes: "", met: sh.met, metOn: sh.metOn, followUp: "", accent: f.accent, front, back: null, thumb, createdAt: Date.now(), updatedAt: Date.now() });
+      it.status = "saved"; n++; renderBatch();
+    } catch (e) { console.error(e); toast("Couldn't save one of the cards. Try again."); break; }
+  }
+  if (sh.met) lsSet("kardly.lastMet", sh.met);
+  haptic("success");
+  if (batch.items.every(i => i.status === "saved" || i.status === "error")) { closeScan(); toast(`${n} card${n === 1 ? "" : "s"} saved to your wallet`); }
+  else toast(`${n} saved. The rest are still being read.`);
+}
+
+/* =========================================================
+   Follow-up reminders (Android notifications)
+   ========================================================= */
+function hashId(s) { let x = 7; for (const ch of String(s)) x = (x * 31 + ch.charCodeAt(0)) | 0; return (Math.abs(x) % 2000000000) + 1; }
+function remindAt(iso) { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d, prefs.remindHour ?? 9, 0, 0).getTime(); }
+let remindTimer = null;
+async function syncReminders(ask) {
+  if (!N || !N.syncReminders || !Store.loaded) return null;
+  const on = prefs.reminders !== false;
+  const list = on ? Store.cards.filter(c => isoOk(c.followUp)).map(c => ({
+    id: hashId(c.id), at: remindAt(c.followUp), cardId: c.id,
+    title: `Follow up with ${titleOf(c)}`,
+    body: [c.name && c.company ? c.company : "", c.met ? "Met at " + c.met : "", c.notes ? c.notes.slice(0, 90) : ""].filter(Boolean).join(" · ") || "Tap to open their card",
+  })) : [];
+  try { return await N.syncReminders(list, !!ask); } catch (e) { console.warn("reminders", e); return null; }
+}
+function scheduleReminderSync(ask) {
+  clearTimeout(remindTimer);
+  remindTimer = setTimeout(() => syncReminders(ask).then(r => {
+    if (ask && r && r.granted === false) toast("Allow notifications for Kardly to get follow-up reminders.");
+    if (!$("#setSheet").hidden) renderSettings();
+  }), ask ? 0 : 500);
+}
+
+/* =========================================================
+   Backup and restore: one file with every card and photo
+   ========================================================= */
+function blobToDataUrl(b) { return new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = () => rej(fr.error); fr.readAsDataURL(b); }); }
+async function refToDataUrl(ref) {
+  const u = await imageUrl(ref); if (!u) return null;
+  if (u.startsWith("data:")) return u;
+  try { return await blobToDataUrl(await (await fetch(u)).blob()); } catch { return null; }
+}
+async function backupNow() {
+  const cards = Store.cards.filter(c => !c.example);
+  if (!cards.length) { toast("Your wallet is empty, so there's nothing to back up yet."); return; }
+  const out = [];
+  for (let i = 0; i < cards.length; i++) {
+    if (i % 5 === 0) toast(`Preparing backup… ${i} of ${cards.length}`);
+    const c = cards[i], copy = JSON.parse(JSON.stringify(c)), images = {};
+    for (const k of ["front", "back", "thumb"]) if (c[k]) images[k] = await refToDataUrl(c[k]);
+    delete copy.front; delete copy.back; delete copy.thumb; copy.images = images;
+    out.push(copy);
+  }
+  const me = await Store.getMe();
+  const json = JSON.stringify({ app: "kardly", format: 1, exportedAt: new Date().toISOString(), count: out.length, cards: out, me: me || null });
+  await saveFile(`kardly-backup-${todayISO()}.json`, json, "application/json");
+  lsSet("kardly.lastBackup", Date.now());
+  if (!$("#setSheet").hidden) renderSettings();
+}
+const STR = (v, m = 2000) => typeof v === "string" ? v.slice(0, m) : "";
+const ARR = v => Array.isArray(v) ? v.filter(x => typeof x === "string").map(x => x.slice(0, 300)).slice(0, 20) : [];
+function cleanCard(c) {
+  return { id: /^[A-Za-z0-9_-]{3,64}$/.test(STR(c.id)) ? c.id : uid("c"), name: STR(c.name, 200), title: STR(c.title, 200), company: STR(c.company, 200), website: STR(c.website, 300),
+    phones: ARR(c.phones), emails: ARR(c.emails), address: STR(c.address, 500), linkedin: STR(c.linkedin, 300), links: ARR(c.links), tags: ARR(c.tags), notes: STR(c.notes, 4000),
+    met: STR(c.met, 200), metOn: isoOk(c.metOn) ? c.metOn : "", followUp: isoOk(c.followUp) ? c.followUp : "", accent: /^#[0-9a-f]{6}$/i.test(STR(c.accent)) ? c.accent : null,
+    createdAt: Number.isFinite(c.createdAt) ? c.createdAt : Date.now(), updatedAt: Number.isFinite(c.updatedAt) ? c.updatedAt : Date.now() };
+}
+async function dataUrlToBlob(d) { if (typeof d !== "string" || !/^data:image\/(jpeg|png|webp);base64,/.test(d)) return null; try { return await (await fetch(d)).blob(); } catch { return null; } }
+async function restoreFrom(file) {
+  let data; try { data = JSON.parse(await file.text()); } catch { toast("That file isn't a Kardly backup."); return; }
+  if (!data || data.app !== "kardly" || !Array.isArray(data.cards)) { toast("That file isn't a Kardly backup."); return; }
+  let added = 0, skipped = 0;
+  for (let i = 0; i < data.cards.length; i++) {
+    const raw = data.cards[i]; if (!raw || typeof raw !== "object") continue;
+    const c = cleanCard(raw), have = Store.cards.find(x => x.id === c.id);
+    if (have && (have.updatedAt || 0) >= c.updatedAt) { skipped++; continue; }
+    toast(`Restoring ${i + 1} of ${data.cards.length}…`);
+    const imgs = raw.images || {};
+    for (const k of ["front", "back", "thumb"]) {
+      const b = await dataUrlToBlob(imgs[k]); c[k] = null;
+      if (b) { const im = await blobToImage(b).catch(() => null); c[k] = await Store.putImage(b, c.id + "_" + k[0] + "_r" + Date.now().toString(36), im ? im.naturalWidth : null, im ? im.naturalHeight : null); }
+    }
+    if (!c.front) { skipped++; continue; }
+    await Store.save(c); added++;
+    if (have) { Store.removeImage(have.front); Store.removeImage(have.back); Store.removeImage(have.thumb); }
+  }
+  if (data.me && typeof data.me === "object" && !(await Store.getMe())) await Store.saveMe(cleanMe(data.me));
+  toast(added ? `Restored ${added} card${added === 1 ? "" : "s"}${skipped ? `. ${skipped} were already in your wallet` : ""}.` : "Everything in that backup is already in your wallet.");
+  haptic("success"); if (!$("#setSheet").hidden) renderSettings();
+}
+$("#restoreIn").onchange = e => { const f = e.target.files && e.target.files[0]; if (f) restoreFrom(f); };
+
+/* =========================================================
+   My card: your own digital visiting card with a QR code
+   ========================================================= */
+const ME_FIELDS = [["name", "Name"], ["title", "Job title"], ["company", "Company"], ["website", "Website"], ["phones", "Phone numbers"], ["emails", "Emails"], ["address", "Address"], ["linkedin", "LinkedIn"]];
+function cleanMe(m) { return { name: STR(m.name, 200), title: STR(m.title, 200), company: STR(m.company, 200), website: STR(m.website, 300), phones: ARR(m.phones), emails: ARR(m.emails), address: STR(m.address, 500), linkedin: STR(m.linkedin, 300) }; }
+async function openMe(edit) { const me = await Store.getMe(); renderMe(me, edit || !me); openSheet($("#meSheet")); }
+async function qrSvg(text) {
+  const qrcode = await loadLib("qr", "qrcode"); if (!qrcode) return null;
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs["UTF-8"];
+  const q = qrcode(0, "M"); q.addData(text, "Byte"); q.make();
+  const n = q.getModuleCount(), NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${n + 4} ${n + 4}`); svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "QR code with my contact details");
+  let d = ""; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c + 2} ${r + 2}h1v1h-1z`;
+  const bg = document.createElementNS(NS, "rect"); bg.setAttribute("width", n + 4); bg.setAttribute("height", n + 4); bg.setAttribute("fill", "#FFFFFF");
+  const path = document.createElementNS(NS, "path"); path.setAttribute("d", d); path.setAttribute("fill", "#0B1E44"); path.setAttribute("shape-rendering", "crispEdges");
+  svg.append(bg, path); return svg;
+}
+function renderMe(me, editing) {
+  const body = $("#meBody"), foot = $("#meFoot"); body.textContent = ""; foot.textContent = "";
+  if (editing) {
+    body.append(h("h3", { class: "h-serif" }, "Your ", h("em", { text: "digital card" })),
+      h("p", { class: "lede", text: "Fill in what you'd print on your visiting card. People scan your QR code with their phone camera and your contact saves straight into their phone." }));
+    const fs = h("fieldset", { class: "fs" });
+    ME_FIELDS.forEach(([k, label]) => {
+      const multi = k === "phones" || k === "emails", v = me ? (multi ? (me[k] || []).join("\n") : me[k] || "") : "";
+      fs.append(h("div", { class: "field" + (k === "address" ? " wide" : "") }, h("label", { for: "me-" + k, text: label }),
+        multi ? h("textarea", { id: "me-" + k, rows: "2", class: "mono", text: v }) : h("input", { id: "me-" + k, value: v, inputmode: k === "website" || k === "linkedin" ? "url" : null }),
+        multi ? h("span", { class: "hint", text: "One per line" }) : null));
+    });
+    body.append(fs);
+    foot.append(me ? h("button", { class: "btn ghost", type: "button", onclick: () => renderMe(me, false) }, "Cancel") : null, h("span", { class: "spacer" }),
+      h("button", { class: "btn gold", type: "button", onclick: async () => {
+        const v = {}; ME_FIELDS.forEach(([k]) => { const el = $("#me-" + k); v[k] = k === "phones" || k === "emails" ? lines(el.value) : el.value.trim(); });
+        if (!v.name && !v.company) { toast("Add at least your name."); return; }
+        try { await Store.saveMe(cleanMe(v)); haptic("success"); renderMe(cleanMe(v), false); toast("Your card is ready"); } catch { toast("Couldn't save your card. Try again."); }
+      } }, "Save my card"));
+    return;
+  }
+  const phones = (me.phones || []).map(phoneParts);
+  body.append(h("div", { class: "mycard" },
+    h("div", { class: "mc-top" }, h("div", null, h("div", { class: "mc-name", text: me.name || me.company }), h("div", { class: "mc-role", text: [me.title, me.name ? me.company : ""].filter(Boolean).join(" · ") }))),
+    h("div", { class: "mc-lines" }, phones.slice(0, 2).map(p => h("span", { text: p.num })), (me.emails || []).slice(0, 1).map(e => h("span", { text: e })), webUrl(me.website) ? h("span", { text: prettyUrl(webUrl(me.website)) }) : null)));
+  const tile = h("div", { class: "qr-tile" }, h("div", { class: "spin", style: { margin: "40px auto" } }));
+  body.append(tile, h("p", { class: "qr-cap", text: "Ask them to point their phone camera at this code. Your contact saves straight into their phone, with no app needed." }));
+  qrSvg(vcard([me])).then(svg => { tile.textContent = ""; tile.append(svg || h("p", { text: "The QR code couldn't load. Check your connection.", style: { color: "#0B1E44", margin: "20px", textAlign: "center" } })); });
+  if (canSave()) foot.append(h("button", { class: "btn sm", type: "button", onclick: () => saveFile(slug(me.name || "my-card") + ".vcf", vcard([me]), "text/vcard") }, icon("share"), N ? "Share my contact" : "Save my contact"));
+  foot.append(h("span", { class: "spacer" }), h("button", { class: "btn sm", type: "button", onclick: () => renderMe(me, true) }, "Edit"));
+}
+$("#tabMe").onclick = () => openMe(false);
+$("#meClose").onclick = () => closeSheet($("#meSheet"));
+if (N && N.onOpenCard) N.onOpenCard(id => { const go = () => Store.loaded ? (closeTop(), openDetail(id)) : setTimeout(go, 200); go(); });
 
 /* =========================================================
    Settings
@@ -1733,6 +2119,27 @@ function renderSettings() {
         h("button", { class: "btn sm", type: "button", onclick: () => saveFile(`kardly-cards-${stamp}.csv`, csv(real), "text/csv") }, icon("grid"), "Spreadsheet (.csv)")));
   }
   b.append(ex);
+  // backup
+  const bk = h("section", { class: "set-group" }, h("h3", { text: "Backup" }));
+  const last = lsGet("kardly.lastBackup", 0);
+  bk.append(h("p", { text: (Store.mode === "cloud" ? "Your cards already sync to your Claude account. A backup file is an extra copy you keep yourself." : "Your cards live only on this " + (N ? "phone" : "browser") + ". Save a backup file now and then, for example to Google Drive, so a lost phone doesn't mean lost cards.") + (last ? ` Last backup: ${new Date(last).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}.` : " No backup yet.") }),
+    h("div", { style: { display: "flex", gap: "8px", flexWrap: "wrap" } },
+      canSave() ? h("button", { class: "btn sm gold", type: "button", onclick: backupNow }, icon("cloud"), "Back up now") : null,
+      h("button", { class: "btn sm", type: "button", onclick: () => { const i = $("#restoreIn"); i.value = ""; i.click(); } }, icon("upload"), "Restore from a backup")));
+  b.append(bk);
+  // reminders
+  const rm = h("section", { class: "set-group" }, h("h3", { text: "Follow-up reminders" }));
+  if (N && N.syncReminders) {
+    const due = Store.cards.filter(c => isoOk(c.followUp) && remindAt(c.followUp) > Date.now()).length;
+    const status = h("p", { text: `You'll get a notification on each card's "Follow up by" date. ${due} reminder${due === 1 ? "" : "s"} coming up.` });
+    rm.append(status);
+    const sel = h("select", { class: "sort", id: "remindHour", "aria-label": "Reminder time", onchange: e => { prefs.remindHour = +e.target.value; savePrefs(); scheduleReminderSync(false); } },
+      [7, 8, 9, 10, 11, 12, 14, 17, 19].map(hr => h("option", { value: String(hr), selected: (prefs.remindHour ?? 9) === hr, text: "Remind me at " + new Date(2026, 0, 1, hr).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }) })));
+    rm.append(h("div", { style: { display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" } }, sel,
+      h("button", { class: "btn sm", type: "button", onclick: () => { prefs.reminders = prefs.reminders === false; savePrefs(); scheduleReminderSync(prefs.reminders !== false); renderSettings(); } }, prefs.reminders === false ? "Turn reminders on" : "Turn reminders off")));
+    N.notificationsAllowed(false).then(ok => { if (!ok && prefs.reminders !== false) rm.append(h("div", { style: { display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" } }, h("p", { text: "Notifications are off for Kardly." }), h("button", { class: "btn sm gold", type: "button", onclick: () => scheduleReminderSync(true) }, "Allow notifications"))); }).catch(() => {});
+  } else rm.append(h("p", { text: "Reminders arrive as phone notifications in the Kardly Android app. Here, follow-ups that are due show at the top of your wallet." }));
+  b.append(rm);
   // appearance
   const ap = h("section", { class: "set-group" }, h("h3", { text: "Appearance" }));
   const seg = h("div", { class: "seg", role: "group", "aria-label": "Theme" });
@@ -1742,7 +2149,7 @@ function renderSettings() {
   b.append(h("section", { class: "set-group" }, h("h3", { text: "About" }), about));
   if (N && N.appInfo) N.appInfo().then(i => { about.textContent = `Kardly ${i.version} (build ${i.build}) · ${storageLine()}.`; }).catch(() => {});
 }
-$("#openSettings").onclick = openSettings; $("#tabMore").onclick = openSettings; $("#setClose").onclick = () => closeSheet($("#setSheet"));
+$("#openSettings").onclick = openSettings; $("#setClose").onclick = () => closeSheet($("#setSheet"));
 $("#tabCards").onclick = () => { closeTop(); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
 /* =========================================================
@@ -1776,6 +2183,7 @@ if (N && N.scanCard) {   // Android: Google's scanner is the main path; manual c
   $("#pickCam").lastChild.textContent = "Scan card";
   $("#pickGal").lastChild.textContent = "Crop a photo myself";
 }
+loadLib("phone", "libphonenumber").then(lib => { if (lib) { kindCache.clear(); render(); refreshDetail(); } });
 if (N && N.ready) N.ready();
 window.__kardly = { detectJS, detectCV, refineEdges, loadCV, outputSize, scan, Store, render, takeFile, acceptScans };
 })();
